@@ -1,0 +1,61 @@
+<string>::="1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"0"
+
+<number>
+"+"
+"-"
+<addop>::="+"|"-"
+<not>::="~"
+
+<mulop>::="*"|"/"
+
+<leftB>::="("
+<rightB>::=")"
+
+
+
+<real>= (<addop>|<not>)<number>
+<prim>::= <leftB><add><rightB>|<real>
+<add>::=<mul>|<add><addop><mul>
+<mul>::=<prim>|<mul><mulop><prim>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<and>::=<add>|<and>"&"<add>
+<xor>::=<and>|<xor>"^"<and>
+<or>::=<xor>|<or>"|"<xor>
+
+
+"&"
+"|"
+"~"
+"^"
+
+"&" > "^" > "|"
+
+# 巴斯克诺尔范式，用 BNF 定义一下 BNF，终结符 <string> <identifier>
+# js 标准 Grammar 篇，看看操作符的优先级及其定义
+# 尖括号里都是 id
+# 双引号里都是 str
+# bnf 
+
+
+# hash 红黑树 A+树 双链表 堆 
+
+
+<string>="""any_character*"""
+<identifier>="<"any_character*">"
+<factor>::=<identifier>|<string>|("("<expression>")""*"?|"("<expression>")""+"?|"("<expression>")""?"?)|<expression>"*"|<expression>"?"|<expression>"+"
+<term>::=<factor>+
+<expression>=<term>("|"<term>)*
+<rule>::=<identifier>"::="<expression>
+<bnf>::=<rule>*
