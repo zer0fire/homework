@@ -59,3 +59,23 @@
 <expression>=<term>("|"<term>)*
 <rule>::=<identifier>"::="<expression>
 <bnf>::=<rule>*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<whitespace>::=" "
+<number>::="1"
+<boolean>::="true"|"false"
+<string>
+<object>::="{"<whitespace><string>":"(<object>|<number>|<boolean>)<whitespace>"}"
+<json>::=<string>|<number>|<boolean>|<object>
