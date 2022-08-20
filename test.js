@@ -149,5 +149,5 @@ console.log(JSON.stringify(mul(tokens), null, '    '))
 
 
 // 加减法
-<number>
-<+>
+// <number>
+// <+>

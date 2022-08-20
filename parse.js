@@ -3,6 +3,7 @@
 //   "B": 2
 // }
 
+// JSON.parse
 const jsonStr = `
 {
   "A": 1,
@@ -10,10 +11,32 @@ const jsonStr = `
   "C": true,
   "G": false,
   "D": {
-    "E": null
+    "E": null,
+    "F": [1, "2"]
   }
 }
 `
+
+const jsonStr2 = `
+  {
+    "A": {
+      "B": 1
+    }
+  }
+`
+
+const jsonStr3 = `
+  {
+    "A": "1"
+  }
+`
+// (\s+) 所有空格，比如 \n，比如空格
+// let re = /(\s+)|(?:(?:[1-9][0-9]*|0)(?:\.[1-9][0-9]*))|(?:(?:[1-9][0-9]*|0)\.?)|(?:\.[1-9][0-9]*))|(".*")|(\,)|(\:)|(\[)|(\])|(\{)|(\})|(true)|(false)|(null)/g
+
+// getTokens 获得的 token
+// 制定一个规则，把 parse 的 token 组装起来，k-v 一对放到对象里
+// object 栈，栈顶放入一个对象，object[key] = value
+
 /**
  * 
  * @param {string} str 
@@ -42,6 +65,14 @@ function getTokens(str) {
         tokens.push({ type: 'end' })
         index++
         break;
+      case '[':
+        tokens.push({ type: 'arrayStart' })
+        index++
+        break;
+      case ']':
+        tokens.push({ type: 'arrayEnd' })
+        index++
+        break;
       case ':': 
         tokens.push({ type: 'bridge' })
         index++
@@ -61,7 +92,7 @@ function getTokens(str) {
       case "9":
       case "0":
         let numCache = ''
-        while(str[index] !== ',') {
+        while(str[index] !== ',' && str[index] !== '\n') {
           numCache += str[index]
           index++
         }
@@ -89,6 +120,57 @@ function getTokens(str) {
   return tokens
 }
 
+const tokens = [
+  {
+      "type": "start"
+  },
+  {
+      "type": "string",
+      "value": "A"
+  },
+  {
+      "type": "bridge"
+  },
+  {
+      "type": "start"
+  },
+  {
+      "type": "string",
+      "value": "B"
+  },
+  {
+      "type": "bridge"
+  },
+  {
+      "type": "number",
+      "value": 1
+  },
+  {
+      "type": "end"
+  },
+  {
+      "type": "end"
+  }
+]
+
+
+function parse(tokens) {
+  const objectStack = []
+  const key = []
+  for(let i = 0; i < tokens.length; i++) {
+    if (tokens[i].type === 'start') {
+      objectStack.push({})
+    } else if (tokens[i].type === 'string' && tokens[i+1].type === 'bridge') {
+      key.push(tokens[i].value)
+      objectStack[objectStack.length - 1][tokens[i].value] = undefined
+    } else if (tokens[i - 1].type === 'bridge') {
+      const cacheKey = key.pop()
+      objectStack[objectStack.length - 1][cacheKey] = tokens[i].value
+    }
+  }
+  // 栈顶元素取出来
+  return objectStack[objectStack.length - 1]
+}
 
 [
   {
@@ -102,80 +184,12 @@ function getTokens(str) {
       "type": "bridge"
   },
   {
-      "type": "number",
-      "value": 1
-  },
-  {
-      "type": "comma"
-  },
-  {
       "type": "string",
-      "value": "B"
-  },
-  {
-      "type": "bridge"
-  },
-  {
-      "type": "string",
-      "value": "string"
-  },
-  {
-      "type": "comma"
-  },
-  {
-      "type": "string",
-      "value": "C"
-  },
-  {
-      "type": "bridge"
-  },
-  {
-      "type": "boolean",
-      "value": true
-  },
-  {
-      "type": "comma"
-  },
-  {
-      "type": "string",
-      "value": "G"
-  },
-  {
-      "type": "bridge"
-  },
-  {
-      "type": "boolean",
-      "value": false
-  },
-  {
-      "type": "comma"
-  },
-  {
-      "type": "string",
-      "value": "D"
-  },
-  {
-      "type": "bridge"
-  },
-  {
-      "type": "start"
-  },
-  {
-      "type": "string",
-      "value": "E"
-  },
-  {
-      "type": "bridge"
-  },
-  {
-      "type": "null"
-  },
-  {
-      "type": "end"
+      "value": "1"
   },
   {
       "type": "end"
   }
 ]
 
-console.log(JSON.stringify(getTokens(jsonStr), null, 4))
+console.log(JSON.stringify(parse(getTokens(jsonStr3)), null, 4))

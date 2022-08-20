@@ -1,9 +1,8 @@
-{
-  "A": 1,
-  "B": "string",
-  "C": true,
-  "G": false,
-  "D": {
-    "E": null
+[
+  1,
+  true,
+  false,
+  {
+    
   }
-}
+]
