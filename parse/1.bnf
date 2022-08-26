@@ -126,14 +126,13 @@ block_item_list : block_item_list COMMA root_block
 <block_item_list>::=(<block_item_list>","<root_block>)|<root_block>
 
 
-<json>::=<array>|<object>
-<object>::="{"(<whitespace><string><whitespace>":"<whitespace><value>(","<string><whitespace>":"<whitespace><value>)*)?"}"
-<array>::="["(<value>(","<value>)*)?"]"
-
-<value>::=<whitespace>(<string>|<number>|<object>|<array>|"true"|"false"|"null")<whitespace>
+<object>::="{"(<whitespace><string><whitespace>":"<whitespace><json>(","<string><whitespace>":"<whitespace><json>)*)?"}"
+<array>::="["(<json>(","<json>)*)?"]"
+<boolean>::="true"|"false"
 <string>
 <number>
-<whitespace>
+<whitespace>::=" "|"\n"
+<json>::=<whitespace>(<string>|<number>|<object>|<array>|<boolean>|"null")<whitespace>
 
 
 {
