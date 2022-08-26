@@ -1,0 +1,164 @@
+<string>::="1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"0"
+
+<number>
+"+"
+"-"
+<addop>::="+"|"-"
+<not>::="~"
+
+<mulop>::="*"|"/"
+
+<leftB>::="("
+<rightB>::=")"
+
+
+
+<real>= (<addop>|<not>)<number>
+<prim>::= <leftB><add><rightB>|<real>
+<add>::=<mul>|<add><addop><mul>
+<mul>::=<prim>|<mul><mulop><prim>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<and>::=<add>|<and>"&"<add>
+<xor>::=<and>|<xor>"^"<and>
+<or>::=<xor>|<or>"|"<xor>
+
+
+"&"
+"|"
+"~"
+"^"
+
+"&" > "^" > "|"
+
+# 巴斯克诺尔范式，用 BNF 定义一下 BNF，终结符 <string> <identifier>
+# js 标准 Grammar 篇，看看操作符的优先级及其定义
+# 尖括号里都是 id
+# 双引号里都是 str
+# bnf 
+
+
+# hash 红黑树 A+树 双链表 堆 
+
+
+<string>="""any_character*"""
+<identifier>="<"any_character*">"
+<factor>::=<identifier>|<string>|("("<expression>")""*"?|"("<expression>")""+"?|"("<expression>")""?"?)|<expression>"*"|<expression>"?"|<expression>"+"
+<term>::=<factor>+
+<expression>=<term>("|"<term>)*
+<rule>::=<identifier>"::="<expression>
+<bnf>::=<rule>*
+
+
+
+
+
+
+
+<string>
+
+
+
+
+
+
+
+<whitespace>::=" "|"\n"
+<number>::="1"
+<boolean>::="true"|"false"
+<string>::="""any_character*"""
+<array>::="["((<string>|number)",")*"]"
+<object>::="{"<string>":"(<object>|<number>|<boolean>)"}"
+<json>::=<string>|<number>|<boolean>|<object>
+
+
+# {
+#   "A": 1,
+#   "B": "string",
+#   "C": true,
+#   "G": false,
+#   "D": {
+#     "E": null
+#   }
+# }
+
+
+# 1. json里的对象key必须是字符串型，value可以是任意类型；
+# 2. json根节点必须是对象或者数组；
+# 3. json支持的值包括：
+#         - 数字（整数或浮点数）
+#         - 字符串（在双引号中）
+#         - 逻辑值（true 或 false）
+#         - 数组（在方括号中）
+#         - 对象（在花括号中）
+#         - null
+# 4. 分割符为逗号","
+
+root_block : LSBRACKET block_item_list RSBRACKET
+           | LBRACE block_item_list RBRACE
+           | CONSTANT
+           | NORMSTRING COLON root_block
+           | NORMSTRING
+           | KEYWORDS
+
+block_item_list : block_item_list COMMA root_block
+                | root_block
+
+<json>::="{"<block_item_list>"}"
+              |"["<block_item_list>"]"
+              |(<true>|<false>)
+              |<null>
+              |<string>":"<json>
+              |<string>
+
+# true false null
+<block_item_list>::=(<block_item_list>","<root_block>)|<root_block>
+
+
+<json>::=<array>|<object>
+<object>::="{"(<whitespace><string><whitespace>":"<whitespace><value>(","<string><whitespace>":"<whitespace><value>)*)?"}"
+<array>::="["(<value>(","<value>)*)?"]"
+
+<value>::=<whitespace>(<string>|<number>|<object>|<array>|"true"|"false"|"null")<whitespace>
+<string>
+<number>
+<whitespace>
+
+
+{
+  tokens = [
+    space='regexp:\s+'
+    string = "regexp:\"[^\"]*\"|'[^']*'"
+    number = "regexp:(\+|\-)?\p{Digit}*"
+    id = "regexp:\p{Alpha}\w*"
+    comma = ","
+    colon = ":"
+    brace1 = "{"
+    brace2 = "}"
+    brack1 = "["
+    brack2 = "]"
+  ]
+  extends("array|object|json")=value
+}
+
+root ::= json
+json ::= array | object  { hooks=[wsBinders="null, null"] }
+value ::= string | number | json {name="value" hooks=[leftBinder="GREEDY_LEFT_BINDER"]}
+
+array ::= '[' [!']' item (!']' ',' item) *] ']' {pin(".*")=1 extends=json}
+private item ::= json {recoverWhile=recover}
+object ::= '{' [!'}' prop (!'}' ',' prop) *] '}' {pin(".*")=1 extends=json}
+prop ::= [] name ':' value {pin=1 recoverWhile=recover} // remove [] to make NAME mandatory
+name ::= id | string {name="name" hooks=[rightBinder="GREEDY_RIGHT_BINDER"]}
+private recover ::= !(',' | ']' | '}' | '[' | '{')
