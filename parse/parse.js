@@ -12,6 +12,23 @@
 // 制定一个规则，把 parse 的 token 组装起来，k-v 一对放到对象里
 // object 栈，栈顶放入一个对象，object[key] = value
 
+
+
+
+/** bnf
+<object>::="{"(<whitespace><string><whitespace>":"<whitespace><json>(","<string><whitespace>":"<whitespace><json>)*)?"}"
+<array>::="["(<json>(","<json>)*)?"]"
+<boolean>::="true"|"false"
+<string>
+<number>
+<whitespace>::=" "|"\n"
+<json>::=<whitespace>(<string>|<number>|<object>|<array>|<boolean>|"null")<whitespace>
+
+**/
+
+
+
+
 /**
  * 
  * @param {string} str 
