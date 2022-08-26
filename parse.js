@@ -133,33 +133,61 @@ function parse(tokens) {
   const objectStack = []
   const key = []
   for(let i = 0; i < tokens.length; i++) {
-    if (tokens[i - 1] && tokens[i - 1].type === 'bridge') {
+    // 判断是否是 value
+    if (
+      (tokens[i - 1] && tokens[i - 1].type === 'bridge') 
+      || (
+        // 过滤 array 里面的 object
+        tokens[i].type !== 'end' 
+        // 过滤 array 里面的 array
+        && tokens[i].type !== 'arrayEnd'
+        // 过滤 comma
+        && tokens[i].type !== 'comma'
+        && objectStack[objectStack.length - 1] instanceof Array
+    )) {
       // value
+      console.log('========value', tokens[i])
       const topObj = objectStack[objectStack.length - 1]
       let value
       if (tokens[i].type === 'start') {
         // value 是 object
+        console.log('========start', tokens[i])
         const obj = {}
         objectStack.push(obj)
         value = obj
+      } else if (tokens[i].type === 'arrayStart') {
+        // value 是 object
+        console.log('=======arrayStart', tokens[i])
+        const arr = []
+        objectStack.push(arr)
+        value = arr 
       } else {
         // value 是非引用值
         value = tokens[i].value
-        if (tokens[i + 1].type !== 'comma' && tokens[i + 1].type !== 'end') {
+        // console.log(tokens[i])
+        if (tokens[i + 1].type !== 'comma' && tokens[i + 1].type !== 'end' && tokens[i + 1].type !== 'arrayEnd') {
           throw Error(`unexpected token ${JSON.stringify(tokens[i + 1])}`)
         }
       }
-      const cacheKey = key.pop()
-      topObj[cacheKey] = value
+      // console.log(value)
+      if (topObj instanceof Array) {
+        topObj.push(value)
+      } else {
+        const cacheKey = key.pop()
+        topObj[cacheKey] = value
+      }
     } else if (tokens[i].type === 'start') {
       // object start
       objectStack.push({})
+    } else if (tokens[i].type === 'arrayStart') {
+      objectStack.push([])
     } else if (tokens[i].type === 'string' && tokens[i+1].type === 'bridge') {
       // key
       key.push(tokens[i].value)
       objectStack[objectStack.length - 1][tokens[i].value] = undefined
-    } else if (tokens[i].type === 'end' && objectStack.length >= 2) {
+    } else if ((tokens[i].type === 'end' || tokens[i].type === 'arrayEnd') && objectStack.length >= 2) {
       // object end
+      console.log('======end', tokens[i])
       if (tokens[i + 1].type === 'string') {
         throw Error(`unexpected token ${JSON.stringify(tokens[i + 1])}`)
       }
@@ -210,4 +238,4 @@ const jsonStr4 = `
   }
 `
 
-console.log(JSON.stringify(parse(getTokens(jsonStr3)), null, 4))
+console.log(JSON.stringify(parse(getTokens(jsonStr)), null, 4))
