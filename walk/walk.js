@@ -3,11 +3,11 @@ const statePrefix = []
 function walk(ast, { enter, leave }) {
     // ast[a][0][b]
     if (typeof ast === 'object') {
-        enter(ast)
+        enter && enter(ast)
         for(let key in ast) {
             walk(ast[key], { enter, leave })
         }
-        leave(ast)
+        leave && leave(ast)
     }
 }
 
