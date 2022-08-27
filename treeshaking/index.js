@@ -34,9 +34,10 @@ ast.body.map((node, index) => {
 // 分析 编辑 输出
 // analyze expend output
 console.log(expressionStatement, variableDeclaration)
-expressionStatement.map(node => {
+expressionStatement.map((node, i) => {
   statements.push(declarations[node.expression.callee.name])
   statements.push(node)
+  return { node, i }
 })
 
 
