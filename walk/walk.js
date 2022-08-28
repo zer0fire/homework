@@ -2,7 +2,7 @@ const statePrefix = []
 
 function walk(ast, { enter, leave }) {
     // ast[a][0][b]
-    if (typeof ast === 'object') {
+    if (ast && typeof ast === 'object') {
         enter && enter(ast)
         for(let key in ast) {
             walk(ast[key], { enter, leave })
@@ -10,6 +10,11 @@ function walk(ast, { enter, leave }) {
         leave && leave(ast)
     }
 }
+
+
+
+
+
 
 const enter = (node) => {
     if (node && node.type === 'VariableDeclaration' && node.declarations) {
@@ -35,24 +40,3 @@ module.exports = {
     enter,
     leave
 }
-
-
-
-// const a = 0, b = 1;
-// if (true) {
-//     const c = '123';
-// }
-// function fn1() {
-//     const d = 1
-// }
-// const e = 3
-
-/**
-// =======
-// a
-// b
-// c
-// fn1 => d
-// e
-// =======
- */

@@ -2,7 +2,7 @@ const acorn = require('acorn')
 const fs = require('fs')
 
 const MagicString = require('magic-string')
-const { walk } = require('./walk')
+const { walk, enter, leave } = require('./walk')
 
 const code = fs.readFileSync('./source.js').toString()
 const ast = acorn.parse(code, { ecmaVersion: 7 })
@@ -20,28 +20,28 @@ const m = new MagicString(code)
 //   ast: JSON.stringify(ast, null, 4)
 // })
 
-walk(ast, {
-  enter: (node) => {
-    if (node && node.type === 'VariableDeclaration') {
-      // variableDeclaration.push(node)
-      for(let i in node.declarations) {
-        const key = node.declarations[i].id.name
-        const value = node
-        declarations[key] = value
-      }
-    } else if (node && node.type === 'ExpressionStatement') {
-      expressionStatement.push(node)
-    }
-  }
-})
+// walk(ast, {
+//   enter: (node) => {
+//     if (node && node.type === 'VariableDeclaration') {
+//       // variableDeclaration.push(node)
+//       for(let i in node.declarations) {
+//         const key = node.declarations[i].id.name
+//         const value = node
+//         declarations[key] = value
+//       }
+//     } else if (node && node.type === 'ExpressionStatement') {
+//       expressionStatement.push(node)
+//     }
+//   }
+// })
 // 分析 编辑 输出
 // analyze expend output
 // console.log(expressionStatement, variableDeclaration)
-expressionStatement.map((node, i) => {
-  statements.push(declarations[node.expression.callee.name])
-  statements.push(node)
-  return { node, i }
-})
+// expressionStatement.map((node, i) => {
+//   statements.push(declarations[node.expression.callee.name])
+//   statements.push(node)
+//   return { node, i }
+// })
 
 
 // variableDeclaration.map(node => {
@@ -49,13 +49,14 @@ expressionStatement.map((node, i) => {
 // })
 
 
-console.log('---------------output--------------', statements)
-statements.map((node, index) => {
-  console.log(`---------------m ${index}`, m.snip(node.start, node.end).toString())
-})
+// console.log('---------------output--------------', statements)
+// statements.map((node, index) => {
+//   console.log(`---------------m ${index}`, m.snip(node.start, node.end).toString())
+// })
 // console.log(expressionStatement[0].expression.arguments[0].callee.name)
 
 
 // 当修一个 bug 产生两个 bug 的时候才差不多需要单元测试
 // 单元测试可以隔离架构。当有完整的单元测试才能算分层
 // 刷完单测视频
+walk(ast, { enter, leave })
