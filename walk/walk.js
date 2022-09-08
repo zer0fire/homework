@@ -11,18 +11,13 @@ function walk(ast, { enter, leave }) {
     }
 }
 
-
-
-
-
-
 const enter = (node) => {
     if (node && node.type === 'VariableDeclaration' && node.declarations) {
         // console.log(node.declarations)
         // node.declarations.forEach(declare => {
         //     console.log(`${statePrefix.join('')}${declare.id.name}`)
         // })
-        console.log(`${statePrefix.join('')}${node.declarations.map(it => it.id.name).join(',')}`)
+        // console.log(`${statePrefix.join('')}${node.declarations.map(it => it.id.name).join(',')}`)
     } else if (node && node.type === 'FunctionDeclaration') {
         // console.log(`${node.id.name} => `)
         // console.log(node)
