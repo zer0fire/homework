@@ -1,10 +1,18 @@
 let activeEffect
+const effectStack = []
 
-export function effect (fn) {
-    activeEffect = fn
-    fn()
+function effect (fn) {
+    const effectFn = () => {
+        activeEffect = effectFn
+        effectStack.push(effectFn)
+        fn()
+        effectStack.pop()
+        activeEffect = effectStack[effectStack.length - 1]
+    }
+    effectFn()
 }
 
 export {
-    activeEffect
+    activeEffect,
+    effect
 }

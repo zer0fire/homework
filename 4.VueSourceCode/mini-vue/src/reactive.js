@@ -10,21 +10,31 @@ export function reactive(obj) {
             }
             let deps = depsMap.get(key)
             if (!deps) {
-                deps.set(key, deps = new Set())
+                depsMap.set(key, deps = new Set())
             }
             deps.add(activeEffect)
             return Reflect.get(target, key)
         },
         set(target, key, value) {
             const res = Reflect.set(target, key, value)
-            effectArr.forEach(fn => {
+            const depsMap = effectMap.get(target)
+            if (!depsMap) {
+                return
+            }
+            const effectSet = depsMap.get(key)
+            effectSet && effectSet.forEach(fn => {
                 fn && fn()
             })
             return res
         },
         deleteProperty(target, key) {
             const res = Reflect.deleteProperty(target, key)
-            effectArr.forEach(fn => {
+            const depsMap = effectMap.get(target)
+            if (!depsMap) {
+                return
+            }
+            const effectSet = depsMap.get(key)
+            effectSet && effectSet.forEach(fn => {
                 fn && fn()
             })
             return res
