@@ -67,7 +67,6 @@ describe('createApp', () => {
 
     // createApp 返回一个可以读取 data 结果的对象 app
     test('return a object, it can read property', () => {
-        const div = document.createElement('div')
         const app = createApp({ 
             setup() {
                 return {
@@ -78,7 +77,13 @@ describe('createApp', () => {
                 const el = document.createElement('div')
                 el.innerText = this.title
                 return el
-            }
+            },
+            // setup(props, { slots, attrs, emit, expose }) {
+            //     // slot 插槽
+            //     // attr 特性
+            //     // expose 决定暴露的属性
+            // },
+            expose: []
         }).mount('#app')
         expect(app.title).toBe('hello')
     })
