@@ -34,7 +34,7 @@ let isHostCallbackScheduled = false;
 
 let isMessageLoopRunning = false;
 let scheduledHostCallback: HostCallback | null = null;
-let taskTimeoutID: number = -1;
+let taskTimeoutID: number | NodeJS.Timeout = -1;
 
 let startTime = -1;
 
@@ -57,10 +57,95 @@ let schedulePerformWorkUntilDeadline: Function;
 // This is set while performing work, to prevent re-entrance.
 let isPerformingWork = false;
 
+function workLoop(hasTimeRemaining: boolean, initialTime: number) {
+  let currentTime = initialTime;
+  advanceTimers(currentTime);
+  currentTask = peek(taskQueue) as Task;
 
+  while (currentTask !== null) {
+    if (
+      currentTask.expirationTime > currentTime &&
+      !(hasTimeRemaining || shouldYieldToHost())
+    ) {
+      // This currentTask hasn't expired, and we've reached the deadline.
+      //  当前任务还没有过期
+      break;
+    }
+    const callback = currentTask.callback;
+    if (isFn(callback)) {
+      currentTask.callback = null;
+      currentPriorityLevel = currentTask.priorityLevel;
+      const didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
 
+      const continuationCallback = callback(didUserCallbackTimeout);
+      currentTime = getCurrentTime();
+      if (isFn(continuationCallback)) {
+        currentTask.callback = continuationCallback;
+      } else {
+        if (currentTask === peek(taskQueue)) {
+          pop(taskQueue);
+        }
+      }
+      advanceTimers(currentTime);
+    } else {
+      pop(taskQueue);
+    }
 
+    currentTask = peek(taskQueue) as Task;
+  }
 
+  // Return whether there's additional work
+  if (currentTask !== null) {
+    return true;
+  } else {
+    const firstTimer = peek(timerQueue) as Task;
+    if (firstTimer !== null) {
+      requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
+    }
+    return false;
+  }
+}
+
+function flushWork(hasTimeRemaining: boolean, initialTime: number) {
+  isHostCallbackScheduled = false;
+
+  if (isHostTimeoutScheduled) {
+    // We scheduled a timeout but it's no longer needed. Cancel it.
+    isHostTimeoutScheduled = false;
+    cancelHostTimeout();
+  }
+
+  isPerformingWork = true;
+
+  const previousPriorityLevel = currentPriorityLevel;
+
+  try {
+    return workLoop(hasTimeRemaining, initialTime);
+  } finally {
+    currentTask = null;
+    currentPriorityLevel = previousPriorityLevel;
+    isPerformingWork = false;
+  }
+}
+
+function requestHostTimeout(callback: Callback, ms: number) {
+  taskTimeoutID = setTimeout(() => {
+    callback(getCurrentTime());
+  }, ms);
+}
+
+function cancelHostTimeout() {
+  clearTimeout(taskTimeoutID)
+  taskTimeoutID = -1
+}
+
+function requestHostCallback(callback: HostCallback) {
+  scheduledHostCallback = callback
+  if (!isMessageLoopRunning) {
+    isMessageLoopRunning = true
+    schedulePerformWorkUntilDeadline()
+  }
+}
 
 function advanceTimers(currentTime: number) {
   let timer = peek(timerQueue) as Task
