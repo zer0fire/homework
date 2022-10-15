@@ -15,10 +15,13 @@ export interface Task {
 
 type HostCallback = (hasTimeRemaining: boolean, currentTime: number) => boolean;
 
-// 任务存储，最小堆
-// 立马要执行的任务
+// 如果不能同时立即执行所有任务，就需要任务存储的任务池
+// 是个最小堆
+// 任务之间是有优先级的，紧急更新和非紧急更新，比如 input 和下拉框
+// 定义两个任务池，类型不同
+// 立马要执行的任务，startTime 小于当前时间的任务（比如最优先的任务 -1）
 const taskQueue: Array<Task> = [];
-// 延期的任务
+// 延迟执行的任务，没有 start 开始的任务
 const timerQueue: Array<Task> = [];
 
 let taskIdCounter: number = 1;
@@ -40,139 +43,95 @@ let startTime = -1;
 
 let needsPaint = false;
 let frameInterval = 5; //frameYieldMs;
-
-function shouldYieldToHost() {
-  const timeElapsed = getCurrentTime() - startTime;
-  if (timeElapsed < frameInterval) {
-    // The main thread has only been blocked for a really short amount of time;
-    // smaller than a single frame. Don't yield yet.
-    return false;
-  }
-
-  return true;
-}
-
 let schedulePerformWorkUntilDeadline: Function;
 
 // This is set while performing work, to prevent re-entrance.
 let isPerformingWork = false;
 
-function workLoop(hasTimeRemaining: boolean, initialTime: number) {
-  let currentTime = initialTime;
-  advanceTimers(currentTime);
-  currentTask = peek(taskQueue) as Task;
 
-  while (currentTask !== null) {
-    if (
-      currentTask.expirationTime > currentTime &&
-      !(hasTimeRemaining || shouldYieldToHost())
-    ) {
-      // This currentTask hasn't expired, and we've reached the deadline.
-      //  当前任务还没有过期
-      break;
-    }
-    const callback = currentTask.callback;
-    if (isFn(callback)) {
-      currentTask.callback = null;
-      currentPriorityLevel = currentTask.priorityLevel;
-      const didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
-
-      const continuationCallback = callback(didUserCallbackTimeout);
-      currentTime = getCurrentTime();
-      if (isFn(continuationCallback)) {
-        currentTask.callback = continuationCallback;
-      } else {
-        if (currentTask === peek(taskQueue)) {
-          pop(taskQueue);
-        }
-      }
-      advanceTimers(currentTime);
-    } else {
-      pop(taskQueue);
-    }
-
-    currentTask = peek(taskQueue) as Task;
-  }
-
-  // Return whether there's additional work
-  if (currentTask !== null) {
-    return true;
-  } else {
-    const firstTimer = peek(timerQueue) as Task;
-    if (firstTimer !== null) {
-      requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
-    }
-    return false;
-  }
-}
-
-function flushWork(hasTimeRemaining: boolean, initialTime: number) {
-  isHostCallbackScheduled = false;
-
-  if (isHostTimeoutScheduled) {
-    // We scheduled a timeout but it's no longer needed. Cancel it.
-    isHostTimeoutScheduled = false;
-    cancelHostTimeout();
-  }
-
-  isPerformingWork = true;
-
-  const previousPriorityLevel = currentPriorityLevel;
-
-  try {
-    return workLoop(hasTimeRemaining, initialTime);
-  } finally {
-    currentTask = null;
-    currentPriorityLevel = previousPriorityLevel;
-    isPerformingWork = false;
-  }
-}
-
+// setTimeout 
 function requestHostTimeout(callback: Callback, ms: number) {
   taskTimeoutID = setTimeout(() => {
-    callback(getCurrentTime());
-  }, ms);
+    // 传输 currentTime，到 handleTimeout 里
+    callback(getCurrentTime())
+  }, ms)
 }
 
+// clearTimeout
 function cancelHostTimeout() {
   clearTimeout(taskTimeoutID)
   taskTimeoutID = -1
 }
 
-function requestHostCallback(callback: HostCallback) {
-  scheduledHostCallback = callback
-  if (!isMessageLoopRunning) {
-    isMessageLoopRunning = true
-    schedulePerformWorkUntilDeadline()
-  }
-}
-
 function advanceTimers(currentTime: number) {
   let timer = peek(timerQueue) as Task
   while(timer) {
+    // newTask 里面都有 callback，取消任务可能导致 callback 为 null，因此需要抛出
     if (timer.callback === null) {
       pop(timerQueue)
-    } else if (timer.startTime < currentTime) {
-      timer.sortIndex = timer.expirationTime
-      push(taskQueue, timer)
-      pop(timerQueue)
+    } else if (timer.startTime <= currentTime) {
+      const task = pop(timerQueue)
+      task.sortIndex = timer.expirationTime
+      push(taskQueue, task)
     } else {
-      break
+      // 最小堆中最小的也没有任务过期，什么都不用做
+      return
     }
     timer = peek(timerQueue) as Task
   }
 }
+// TODO:
+function requestHostCallback(flushWork: HostCallback) {
+  scheduledHostCallback = flushWork
+  // flushWork()
+}
+// TODO:
+// 作业：多写注释，了解算法，总结文章（掘金发文章）
+function workLoop (hasTimeRemaining: boolean, initialTime: number) {
+  const task = peek(taskQueue)
+  while(task) {
 
+  }
+}
+// TODO:
+// hasTimeRemaining当前有无剩余时间，initialTime现在的初始时间
+function flushWork(hasTimeRemaining: boolean, initialTime: number) {
+  // 暂时释放出来，任务还没执行完成，
+  isHostCallbackScheduled = false
+  // 定时的先取消
+  if (isHostTimeoutScheduled) {
+    isHostTimeoutScheduled = false
+    cancelHostTimeout()
+  }
+
+  // 为了防止重新进入 isPerformingWork
+  isPerformingWork = true
+
+  try {
+    return workLoop(hasTimeRemaining, initialTime)
+  } finally {
+    // 可以进入 flushWork
+    isPerformingWork = false
+  }
+}
+
+// 接收 currentTime，要从任务池里拿任务
 function handleTimeout(currentTime: number) {
   isHostTimeoutScheduled = false
+  // 检查 timerQueue ，
   advanceTimers(currentTime)
+
+  // 如果没有别的任务执行
   if (!isHostCallbackScheduled) {
     if (peek(taskQueue)) {
+      // 提醒别的任务，现在有在执行
       isHostCallbackScheduled = true
-      requestHostCallback(flushWork)
+      // 这一步开始执行 task.callback()，但是要考虑这个任务如果很庞大呢？早期的 react 没处理，因此优先级更高的任务动不了，会卡
+      // 既然一个任务会阻塞，那么就对时间进行切片，在这段时间内执行任务，如果没有执行完，放回去，回到任务池，先运行别的
+      // 运行在浏览器上，就和浏览器的帧率有关，这个时间就是一帧的时间，16.666ms （60帧每秒）
+      // 现场保留？单链表可以保留当前指针 stack reconciler -> fiber reconciler
+      // requestHostCallback(flushWork)
     } else {
-      // 没有非定时任务
-      // 
       let timer = peek(timerQueue) as Task
       if (timer) {
         requestHostTimeout(handleTimeout, timer.startTime - currentTime)
@@ -181,42 +140,71 @@ function handleTimeout(currentTime: number) {
   }
 }
 
-// input: callback，让 callback 能够按照 priorityLevel 和 delay 执行
-export function scheduleCallback(priorityLevel: number, callback: () => {}, options?: { delay?: number }) {
-    const currentTime = getCurrentTime()
-    let startTime = currentTime
-    if (options && options.delay) {
-      startTime = currentTime + options.delay
-    }
 
-    const timeout = getTimeoutByPriorityLevel(priorityLevel)
-    const expirationTime = startTime + timeout
 
-    let sortIndex = -1
+// 如果是单线程，每次只能处理一个任务
+// 和外界交互的函数，调度一个 callback，callback 就是内容和本体；还要接受优先级本身
+// 外界想加一个任务，要排个队，登记一下，查看优先级和内容
+export function scheduleCallback(priorityLevel: number, callback: () => void, options?: { delay: number }) {
+  // performance.now()
+  const currentTime = getCurrentTime()
+  // startTime ，需要看是否被延迟了，组合成 startTime
+  let startTime = currentTime
+  if (options && options.delay) {
+    startTime += options.delay
+  }
+  // 获取过期时间，timeout 加上 startTime，timeout 通过优先级获取，优先级高的会先运行，timeout 会短
+  const timeout = getTimeoutByPriorityLevel(priorityLevel)
+  const expirationTime = startTime + timeout
 
-    const task: Task = {
-        id: taskIdCounter++,
-        callback,
-        startTime,
-        expirationTime,
-        priorityLevel,
-        sortIndex
-    }
+  let sortIndex = -1
 
-    if (startTime > currentTime) {
-      task.sortIndex = startTime
-      push(timerQueue, task)
+  // 定义一个任务
+  const newTask = {
+    id: taskIdCounter++,
+    callback: callback,
+    priorityLevel: priorityLevel,
+    startTime: startTime,
+    expirationTime: expirationTime,
+    sortIndex: sortIndex,
+  }
 
-      if (!peek(taskQueue) && task === peek(timerQueue)) {
-        if (isHostTimeoutScheduled) {
-          cancelHostTimeout()
-        } else {
-          isHostTimeoutScheduled = true
-        }
-        requestHostTimeout(handleTimeout, startTime - currentTime)
+  // 大于当前时间，说明还没运行到，放到 timeQueue
+  if (startTime > currentTime) {
+    // startTime 是加上了 delay 时间，因此 startTime 越小越靠前执行
+    // 因为越大越晚开始，要先把小的，靠前的先执行
+    newTask.sortIndex = startTime
+    push(timerQueue, newTask)
+    if (!peek(taskQueue) && newTask === peek(timerQueue)) {
+      // 如果 taskQueue 是空的，说明现在没有要调度的任务，就需要 timeQueue 里的任务执行；
+      // 如果 newTask 是在 timeQueue 里优先级最高的，那么就需要放到 setTimeout 里执行，否则就在 timerQueue 中待着吧
+      // 这里不写 delay 就是怕 delay 不存在
+      // requestHostTimeout(newTask.callback, startTime - currentTime)
+
+      // 为了防止两个任务同时倒计时，以及当前的任务是最高的优先级，因此需要先运行现在的 newTask
+      // isHostTimeoutScheduled 会在有上次 setTimeout 的情况下为 true
+      if (isHostTimeoutScheduled) {
+        // cancel 前一个，isHostTimeoutScheduled 不用管继续沿用，在 handleTimeout 里置为 false
+        cancelHostTimeout()
+      } else {
+        // 如果为 false，直接占位
+        isHostTimeoutScheduled = true
       }
-    } else {
-      task.sortIndex = expirationTime
-      push(taskQueue, task)
+      requestHostTimeout(handleTimeout, startTime - currentTime)
     }
+  } else {
+    // 小于当前时间，说明已经开始运行了，要在 expirationTime 前运行完
+    // expirationTime 代表了 timeout + startTime，expirationTime 越小越靠前执行，
+    // 因为越大越晚过期，要保证尽量不过期，就要先把过期的先运行了
+    // 这里通常进来的也是 -1 即立即执行级别的
+    newTask.sortIndex = expirationTime
+    push(taskQueue, newTask)
+    // 要不要进行调度？如果没有别的任务调度（isHostCallbackScheduled），就直接开始；
+    // isPerformingWork 防止重新进入一个任务
+    if (!isHostCallbackScheduled && !isPerformingWork) {
+      isHostCallbackScheduled = true
+      requestHostCallback(flushWork)
+    }
+  }
 }
+
