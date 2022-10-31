@@ -44,9 +44,9 @@ let taskTimeoutID: number | NodeJS.Timeout = -1;
 
 let startTime = -1;
 
-let needsPaint = false;
-let frameInterval = 5; //frameYieldMs;
-let schedulePerformWorkUntilDeadline: Function;
+let needsPaint = false; // 开关
+let frameInterval = 5; //frameYieldMs; 帧间隔，没有对齐帧，需要的话用 requestFrameAnimation
+// let schedulePerformWorkUntilDeadline: Function;
 
 // This is set while performing work, to prevent re-entrance.
 let isPerformingWork = false;
@@ -65,7 +65,9 @@ function cancelHostTimeout() {
   taskTimeoutID = -1;
 }
 
+// 只倒计时一个任务，如果更优先，那么取消掉
 // 消除空 task，把过 startTime 的任务放到 taskQueue 里面
+// 读秒，把 delay 到期的任务移动到 taskQueue。但是现在没有 delay 。实验的 Transition API 用过
 function advanceTimers(currentTime: number) {
   let timer = peek(timerQueue) as Task;
   while (timer) {
@@ -84,23 +86,129 @@ function advanceTimers(currentTime: number) {
     timer = peek(timerQueue) as Task;
   }
 }
-// TODO:
-// 运行 flushWork
-function requestHostCallback(flushWork: HostCallback) {
-  scheduledHostCallback = flushWork;
-  // flushWork()
+// 是否将控制权交还给主线程
+function shouldYieldToHost(): boolean {
+  // 时间段到了就交还，判定是否到了时间切片的末尾
+  const currentTime = getCurrentTime();
+  const interval = currentTime - startTime;
+  // 定时开始时间减去当前时间，如果大于 frameInterval 5 就要交还，如果小于 frameInterval 5 说明在时间切片
+  if (interval < frameInterval) {
+    return false;
+  } else {
+    return true;
+  }
 }
-// TODO:
+
+// 执行 flushWork
+function performWorkUntilDeadline() {
+  // flushWork === scheduledHostCallback
+  if (scheduledHostCallback !== null) {
+    const initialTime = getCurrentTime();
+    startTime = initialTime;
+    // 这里要实现时间切片
+    const hasTimeRemaining = true;
+    let hasMoreWork;
+    try {
+      // 通过 flushWork 获取是否有任务
+      hasMoreWork = scheduledHostCallback(hasTimeRemaining, initialTime);
+    } finally {
+      if (hasMoreWork) {
+        // 有任务，执行时间段
+        schedulePerformWorkUntilDeadline();
+      } else {
+        // 没有任务，归为 null，跳出 loop
+        isMessageLoopRunning = false;
+        scheduledHostCallback = null;
+      }
+    }
+  } else {
+    // workLoop 结束
+    isMessageLoopRunning = false;
+  }
+}
+
+// 通道 1 2，可以分别发布消息和互联，为了开启宏任务
+const channel = new MessageChannel();
+channel.port1.onmessage = performWorkUntilDeadline;
+
+function schedulePerformWorkUntilDeadline() {
+  channel.port2.postMessage(null);
+}
+
+// 运行 flushWork，模拟 requestIdleCallback
+function requestHostCallback(flushWork: HostCallback) {
+  // 过了切片置为 null，切片内执行 workLoop
+  scheduledHostCallback = flushWork;
+  // 表明 workLoop 执行
+  if (!isMessageLoopRunning) {
+    isMessageLoopRunning = true;
+    // 执行红认为
+    schedulePerformWorkUntilDeadline();
+  }
+}
+
 // 作业：多写注释，了解算法，总结文章（掘金发文章）
 // workLoop 运行 taskQueue 中的内容
+// 给定的时间段里执行任务
+// work 指代工作单元，执行 callback
+// initialTime 指的是当前时间，防止前置任务过多，导致 currentTime 过期
 function workLoop(hasTimeRemaining: boolean, initialTime: number): boolean {
-  const task = peek(taskQueue);
-  while (task) {}
-  return false;
+  // const task = peek(taskQueue) as Task;
+  // 当前的 task 有可能被取消，比如被弃用的，callback 为 null
+  let currentTime = initialTime;
+  advanceTimers(currentTime);
+  currentTask = peek(taskQueue) as Task;
+  while (currentTask) {
+    if (
+      (!hasTimeRemaining || shouldYieldToHost()) &&
+      currentTask.expirationTime > currentTime
+    ) {
+      break;
+    }
+    if (isFn(currentTask.callback)) {
+      // 不能重复执行 callback。假如 callback 没在切片内完成，需要变为空
+      // 防止 callback 执行的时间花费过久，这里的 currentTask.callback 可能会被重新执行
+      const callback = currentTask.callback;
+      currentTask.callback = null;
+      // 执行的任务的优先级，为了更高优先级的task方便打断
+      currentPriorityLevel = currentTask.sortIndex;
+
+      // callback 执行之后的返回值，就是任务重新开始的地方，恢复现场的函数
+      // 比如 callback 是组件更新，这里可能是异步的
+      const continuationCallback = callback();
+      // 执行完了，需要更新 currentTime
+      currentTime = getCurrentTime();
+      if (isFn(continuationCallback)) {
+        currentTask.callback = continuationCallback;
+        advanceTimers(currentTime);
+        return true;
+      } else {
+        // 如果执行完了，continuationCallback 可能是 null
+        // pop(taskQueue) 把 currentTask 从堆里面删掉
+        if (peek(taskQueue) === currentTask) {
+          pop(taskQueue);
+        }
+        advanceTimers(currentTime);
+      }
+    } else {
+      pop(taskQueue);
+    }
+    currentTask = peek(taskQueue) as Task;
+  }
+  if (currentTask) {
+    return true;
+  } else {
+    // 继续，如果没有 taskQueue ，就去 timerQueue，
+    const timer = peek(timerQueue) as Task;
+    if (timer) {
+      requestHostTimeout(handleTimeout, timer.startTime - currentTime);
+    }
+    return false;
+  }
 }
-// TODO:
+
 // hasTimeRemaining当前有无剩余时间，initialTime现在的初始时间，不和 currentTime 一致是因为开始时间不一定是 curTime
-// flushWork 主要解决了任务冲突
+// flushWork 主要解决了任务冲突。workLoop 的入口，flush to work
 const flushWork: HostCallback = (
   hasTimeRemaining: boolean,
   initialTime: number
@@ -109,17 +217,22 @@ const flushWork: HostCallback = (
   isHostCallbackScheduled = false;
   // 定时的先取消
   if (isHostTimeoutScheduled) {
-    isHostTimeoutScheduled = false;
     cancelHostTimeout();
+    isHostTimeoutScheduled = false;
   }
 
-  // 为了防止重新进入 isPerformingWork
+  // isPerformingWork 为了防止重新进入一个 workLoop
   isPerformingWork = true;
+  // 记录上一个优先级，方便恢复现场
+  const previousPriorityLevel = currentPriorityLevel;
 
   try {
     return workLoop(hasTimeRemaining, initialTime);
   } finally {
     // 可以进入 flushWork
+    currentTask = null;
+    // 为了打断优先级之后，恢复优先级
+    currentPriorityLevel = previousPriorityLevel;
     isPerformingWork = false;
   }
 };
@@ -138,6 +251,7 @@ function handleTimeout(currentTime: number) {
       // 这一步开始执行 task.callback()，但是要考虑这个任务如果很庞大呢？早期的 react 没处理，因此优先级更高的任务动不了，会卡
       // 既然一个任务会阻塞，那么就对时间进行切片，在这段时间内执行任务，如果没有执行完，放回去，回到任务池，先运行别的
       // 运行在浏览器上，就和浏览器的帧率有关，这个时间就是一帧的时间，16.666ms （60帧每秒）
+      // 如果一个任务花费时间过久，容易堵塞后面的任务，引入了时间切片机制。走某个时间段内周期性执行任务，把控制权交还给浏览器
       // 现场保留？单链表可以保留当前指针 stack reconciler -> fiber reconciler
       // requestHostCallback(flushWork)
     } else {
@@ -218,3 +332,8 @@ export function scheduleCallback(
     }
   }
 }
+
+// react 相关面试题
+// react 如何解决卡顿
+// 时间切片是什么？
+// 作业：写文章，写注释
