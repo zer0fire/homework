@@ -6,6 +6,13 @@
 
 const EOF = Symbol("EOF");
 
+function notNumber(input) {
+  return (
+    input.charCodeAt(0) - "0".charCodeAt(0) > 9 ||
+    input.charCodeAt(0) - "0".charCodeAt(0) < 0
+  );
+}
+
 // 输入
 /**
  *
@@ -17,10 +24,7 @@ function start(input) {
     return afterDot;
   } else if (input === "0") {
     return singleZero;
-  } else if (
-    input.charCodeAt(0) - "0".charCodeAt(0) > 9 ||
-    input.charCodeAt(0) - "0".charCodeAt(0) < 0
-  ) {
+  } else if (notNumber(input)) {
     // 得到非数字
     return fail;
   } else {
@@ -44,10 +48,7 @@ function gotNumber(input) {
     return success;
   } else if (input === ".") {
     return afterDot;
-  } else if (
-    input.charCodeAt(0) - "0".charCodeAt(0) > 9 ||
-    input.charCodeAt(0) - "0".charCodeAt(0) < 0
-  ) {
+  } else if (notNumber(input)) {
     // 得到非数字
     return fail;
   } else {
