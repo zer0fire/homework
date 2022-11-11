@@ -11,7 +11,10 @@ function findSubstr(source, pattern) {
     inner: for (let j = 0; j < pattern.length; j++) {
       //   如果 pattern 里没有重复的字母，那么，j 里面经过的子字符是可以直接跳过的，因此可以 i + j
       if (pattern[j] !== source[j + i]) {
-        i += j - 1;
+        if (j !== 0) {
+          i -= 1;
+        }
+        i += j;
         continue outer;
       }
     }
