@@ -39,6 +39,8 @@ function start(input) {
   //   console.log("start");
   if (input === "<") {
     return tagStart;
+  } else if (input === " ") {
+    return space;
   }
 }
 
@@ -47,7 +49,6 @@ function start(input) {
 // text 中间允许空格
 function space(input) {
   //   console.log("space");
-
   if (input === "<") {
     return tagStart;
   } else if (input == " ") {
@@ -60,7 +61,7 @@ function space(input) {
 function tagStart(input) {
   //   console.log("tagStart");
   if (input === "/") {
-    return tagEndName;
+    return tagEndStart;
   } else if (isAlphabet(input)) {
     return tagStartName;
   } else {
@@ -70,12 +71,21 @@ function tagStart(input) {
 
 function tagStartName(input) {
   //   console.log("tagStartName");
-
   if (isAlphabet(input)) {
     return tagStartName;
   } else if (input === ">") {
     return start;
+  } else if (input === " ") {
+    return space;
   } else {
+    return fail;
+  }
+}
+
+function tagEndStart(input) {
+  if (isAlphabet(input)) {
+    return tagEndName;
+  } else if (input === " ") {
     return fail;
   }
 }
@@ -85,7 +95,7 @@ function tagEndName(input) {
   if (isAlphabet(input)) {
     return tagEndName;
   } else if (input === " ") {
-    return space;
+    return tagEndName;
   } else if (input === ">") {
     return tagEnd;
   } else {
