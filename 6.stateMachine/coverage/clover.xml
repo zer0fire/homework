@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1668172413999" clover="3.2.0">
+  <project timestamp="1668172413999" name="All files">
+    <metrics statements="98" coveredstatements="93" conditionals="70" coveredconditionals="61" methods="22" coveredmethods="20" elements="190" coveredelements="174" complexity="0" loc="98" ncloc="98" packages="1" files="3" classes="3"/>
+    <file name="index.js" path="/Users/wangmeng/Documents/learning-frontend/homework/6.stateMachine/index.js">
+      <metrics statements="35" coveredstatements="33" conditionals="24" coveredconditionals="22" methods="8" coveredmethods="7"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="10" count="15" type="stmt"/>
+      <line num="23" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="24" count="3" type="stmt"/>
+      <line num="25" count="8" type="cond" truecount="2" falsecount="0"/>
+      <line num="26" count="3" type="stmt"/>
+      <line num="27" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="29" count="1" type="stmt"/>
+      <line num="32" count="4" type="stmt"/>
+      <line num="37" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="38" count="1" type="stmt"/>
+      <line num="40" count="4" type="stmt"/>
+      <line num="47" count="19" type="cond" truecount="2" falsecount="0"/>
+      <line num="48" count="7" type="stmt"/>
+      <line num="49" count="12" type="cond" truecount="2" falsecount="0"/>
+      <line num="50" count="2" type="stmt"/>
+      <line num="51" count="10" type="cond" truecount="1" falsecount="1"/>
+      <line num="53" count="0" type="stmt"/>
+      <line num="56" count="10" type="stmt"/>
+      <line num="61" count="3" type="cond" truecount="2" falsecount="0"/>
+      <line num="62" count="1" type="stmt"/>
+      <line num="63" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="64" count="1" type="stmt"/>
+      <line num="66" count="1" type="stmt"/>
+      <line num="72" count="0" type="stmt"/>
+      <line num="79" count="6" type="stmt"/>
+      <line num="83" count="11" type="stmt"/>
+      <line num="85" count="11" type="stmt"/>
+      <line num="87" count="33" type="stmt"/>
+      <line num="89" count="11" type="stmt"/>
+      <line num="90" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="92" count="8" type="stmt"/>
+      <line num="93" count="3" type="cond" truecount="1" falsecount="1"/>
+      <line num="94" count="3" type="stmt"/>
+      <line num="102" count="1" type="stmt"/>
+    </file>
+    <file name="parseHTML.js" path="/Users/wangmeng/Documents/learning-frontend/homework/6.stateMachine/parseHTML.js">
+      <metrics statements="53" coveredstatements="50" conditionals="42" coveredconditionals="35" methods="13" coveredmethods="12"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="9" count="36" type="stmt"/>
+      <line num="10" count="36" type="cond" truecount="2" falsecount="0"/>
+      <line num="19" count="12" type="stmt"/>
+      <line num="20" count="12" type="cond" truecount="1" falsecount="1"/>
+      <line num="29" count="36" type="cond" truecount="2" falsecount="0"/>
+      <line num="40" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="41" count="2" type="stmt"/>
+      <line num="42" count="9" type="cond" truecount="1" falsecount="1"/>
+      <line num="43" count="9" type="stmt"/>
+      <line num="52" count="16" type="cond" truecount="2" falsecount="0"/>
+      <line num="53" count="9" type="stmt"/>
+      <line num="54" count="7" type="cond" truecount="2" falsecount="0"/>
+      <line num="55" count="4" type="stmt"/>
+      <line num="56" count="3" type="cond" truecount="1" falsecount="1"/>
+      <line num="57" count="3" type="stmt"/>
+      <line num="63" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="64" count="4" type="stmt"/>
+      <line num="65" count="7" type="cond" truecount="2" falsecount="0"/>
+      <line num="66" count="5" type="stmt"/>
+      <line num="68" count="2" type="stmt"/>
+      <line num="74" count="15" type="cond" truecount="2" falsecount="0"/>
+      <line num="75" count="10" type="stmt"/>
+      <line num="76" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="77" count="2" type="stmt"/>
+      <line num="78" count="3" type="cond" truecount="1" falsecount="1"/>
+      <line num="79" count="3" type="stmt"/>
+      <line num="81" count="0" type="stmt"/>
+      <line num="86" count="4" type="cond" truecount="2" falsecount="0"/>
+      <line num="87" count="3" type="stmt"/>
+      <line num="88" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="89" count="1" type="stmt"/>
+      <line num="95" count="10" type="cond" truecount="2" falsecount="0"/>
+      <line num="96" count="6" type="stmt"/>
+      <line num="97" count="4" type="cond" truecount="2" falsecount="0"/>
+      <line num="98" count="1" type="stmt"/>
+      <line num="99" count="3" type="cond" truecount="1" falsecount="1"/>
+      <line num="100" count="3" type="stmt"/>
+      <line num="102" count="0" type="stmt"/>
+      <line num="107" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="108" count="3" type="stmt"/>
+      <line num="110" count="3" type="stmt"/>
+      <line num="116" count="0" type="stmt"/>
+      <line num="123" count="29" type="stmt"/>
+      <line num="128" count="6" type="stmt"/>
+      <line num="130" count="6" type="stmt"/>
+      <line num="132" count="96" type="stmt"/>
+      <line num="134" count="6" type="stmt"/>
+      <line num="135" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="137" count="3" type="stmt"/>
+      <line num="138" count="3" type="cond" truecount="1" falsecount="1"/>
+      <line num="139" count="3" type="stmt"/>
+      <line num="143" count="1" type="stmt"/>
+    </file>
+    <file name="string.js" path="/Users/wangmeng/Documents/learning-frontend/homework/6.stateMachine/string.js">
+      <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+      <line num="10" count="2" type="stmt"/>
+      <line num="11" count="18" type="stmt"/>
+      <line num="12" count="18" type="stmt"/>
+      <line num="13" count="22" type="cond" truecount="2" falsecount="0"/>
+      <line num="15" count="17" type="stmt"/>
+      <line num="16" count="17" type="stmt"/>
+      <line num="19" count="18" type="cond" truecount="2" falsecount="0"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="24" count="1" type="stmt"/>
+      <line num="27" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>
