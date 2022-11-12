@@ -7,24 +7,57 @@ function findSubstr(source, pattern) {
   // abcdefghijklmn
   // defg
   // 首先先找到 source 里 pattern 第一位的位置，然后循环，看后面的是不是也一致
-  outer: for (let i = 0; i < source.length; i++) {
-    inner: for (let j = 0; j < pattern.length; j++) {
-      //   如果 pattern 里没有重复的字母，那么，j 里面经过的子字符是可以直接跳过的，因此可以 i + j
-      if (pattern[j] !== source[j + i]) {
-        if (j !== 0) {
-          i -= 1;
-        }
-        i += j;
-        continue outer;
+  // 只变 j
+
+  // 再处理自重复串就可以了
+  let j = 0;
+  for (let i = 0; i < source.length; i++) {
+    if (pattern[j] !== source[i]) {
+      // 替代 for 循环
+      // 字符串没有重复字母
+      // j 归 0
+      j = 0;
+      // 从头开始比
+      // pattern[0]
+      if (pattern[j] === source[i]) {
+        // i j 的双指针，j 要去适应 i，跟着 i 一起走
+        // 从头开始比不能简单的 i++
+        // i++
+        // console.log(i, j);
+        j++;
       }
+    } else {
+      j++;
     }
-    return i;
+    // pattern 进 1
+    if (j === pattern.length) {
+      // 过去的 length 被减掉
+      return i - pattern.length + 1;
+    }
   }
   return -1;
 }
+
+// findSubstr("abcdefghijklmn", "defg");
 
 module.exports = {
   findSubstr,
 };
 
 // 链表上的 6 字环，0 字环，8 字环
+
+// 手动写 pattern 的状态机
+// 用代码生成状态机，处理 pattern，把 pattern 变成状态机
+
+// 状态机处理流，状态机处理字符串
+// https://leetcode.cn/problems/wildcard-matching/
+
+// cocos -> 求一个圆的元素和另外一个线的元素，是否是割线
+// 垂心，线的两个端点
+// 线段的 90 度向量，看在不在两端点的中间
+// 计算几何
+// 有个点是否落在三角形里，多边形内是否有个点
+
+// 计算机图形学，第四版
+// 计算几何
+// 交互式计算机
