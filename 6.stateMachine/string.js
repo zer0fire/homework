@@ -61,3 +61,38 @@ module.exports = {
 // 计算机图形学，第四版
 // 计算几何
 // 交互式计算机
+
+/**
+ * @param {string} source
+ * @param {string} pattern
+ * @return {number}
+ */
+var strStr = function (source, pattern) {
+  let j = 0;
+  let note = 0;
+  for (let i = 0; i < source.length; i++) {
+    console.log("11");
+    if (source[i] !== pattern[j]) {
+      if (note >= 1) {
+        // note 存储到底匹配了多少，如果大于 1，i 就不能从头开始，需要从头的第二个开始比
+        i = i - (note - 1);
+        j = 0;
+        note = 0;
+      } else {
+        j = 0;
+        note = 0;
+      }
+      if (source[i] === pattern[j]) {
+        j++; // 这里是j++
+        note++;
+      }
+    } else {
+      j++;
+      note++;
+    }
+    if (j === pattern.length) {
+      return i - j + 1;
+    }
+  }
+  return -1;
+};
