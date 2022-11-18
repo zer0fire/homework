@@ -29,6 +29,9 @@ function isAlphabet(char) {
   return isLowercase(char) || isUppercase(char);
 }
 
+let value = "";
+let list = [];
+
 // 输入
 /**
  *
@@ -37,10 +40,32 @@ function isAlphabet(char) {
  */
 function start(input) {
   //   console.log("start");
-  if (input === "<") {
+  if (input === EOF) {
+    return success;
+  } else if (input === "<") {
     return tagStart;
   } else if (input === " ") {
     return space;
+  } else {
+    value += input;
+    return startTextNode;
+  }
+}
+
+function startTextNode(input) {
+  if (input === EOF) {
+    list.push(value);
+    value = "";
+    return success;
+  } else if (input === "<") {
+    list.push(value);
+    value = "";
+    return tagStart;
+  } else if (input === " ") {
+    return space;
+  } else {
+    value += input;
+    return startTextNode;
   }
 }
 
@@ -61,19 +86,24 @@ function space(input) {
 function tagStart(input) {
   //   console.log("tagStart");
   if (input === "/") {
-    return tagEndStart;
+    return tagStart;
   } else if (isAlphabet(input)) {
-    return tagStartName;
+    value += input;
+    return startTagName;
   } else {
     return fail;
   }
 }
 
-function tagStartName(input) {
+function startTagName(input) {
   //   console.log("tagStartName");
   if (isAlphabet(input)) {
-    return tagStartName;
+    value += input;
+    return startTagName;
   } else if (input === ">") {
+    // console.log(input, value);
+    list.push(value);
+    value = "";
     return start;
   } else if (input === " ") {
     return space;
@@ -82,30 +112,32 @@ function tagStartName(input) {
   }
 }
 
-function tagEndStart(input) {
-  if (isAlphabet(input)) {
-    return tagEndName;
-  } else if (input === " ") {
-    return fail;
-  }
-}
+// function tagEndStart(input) {
+//   if (isAlphabet(input)) {
+//     return tagEndName;
+//   } else if (input === " ") {
+//     return fail;
+//   }
+// }
 
-function tagEndName(input) {
-  //   console.log("tagEndName");
-  if (isAlphabet(input)) {
-    return tagEndName;
-  } else if (input === " ") {
-    return tagEndName;
-  } else if (input === ">") {
-    return tagEnd;
-  } else {
-    return fail;
-  }
-}
+// function tagEndName(input) {
+//   //   console.log("tagEndName");
+//   if (isAlphabet(input)) {
+//     return tagEndName;
+//   } else if (input === " ") {
+//     return tagEndName;
+//   } else if (input === ">") {
+//     return tagEnd;
+//   } else {
+//     return fail;
+//   }
+// }
 
 function tagEnd(input) {
   if (input === EOF) {
     return success;
+  } else if (input === "<") {
+    return tagStart;
   } else {
     return start;
   }
@@ -140,6 +172,25 @@ function parseHTML(str) {
   }
 }
 
+function checkHTML(str) {
+  // <div></div>
+  let state = start;
+
+  for (const char of str) {
+    // console.log(state.name, char);
+    state = state(char);
+  }
+  state = state(EOF);
+  if (state === success) {
+    // 状态成功
+    console.log("=====list", list);
+    return true;
+  } else if (state === fail) {
+    return false;
+  }
+}
+
 module.exports = {
   parseHTML,
+  checkHTML,
 };
