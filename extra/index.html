@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+    <style>
+      body {
+        text-align: center;
+        padding: 0px;
+      }
+      .container {
+        width: 400px;
+        height: 100px;
+        display: flex;
+        flex-basis: max-content;
+        overflow: hidden;
+        flex-wrap: nowrap;
+        flex-flow: row;
+      }
+      .rect {
+        width: 200px;
+        height: 100px;
+        opacity: 70%;
+        color: wheat;
+        flex-grow: 1;
+        flex-shrink: 0;
+      }
+      .red {
+        background-color: red;
+      }
+      .blue {
+        background-color: yellow;
+      }
+      .yellow {
+        background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="rect red">1</div>
+      <div class="rect yellow">2</div>
+      <div class="rect blue">3</div>
+    </div>
+  </body>
+  <div></div>
+  <script src="./loopNode.js"></script>
+</html>

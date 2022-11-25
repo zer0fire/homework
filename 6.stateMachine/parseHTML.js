@@ -10,6 +10,10 @@ function isLowercase(char) {
   return charCode >= "a".charCodeAt(0) && charCode <= "z".charCodeAt(0);
 }
 
+function isSpace(input) {
+  return input === " " || input === "\n" || input === "\r";
+}
+
 /**
  *
  * @param {string} char
@@ -26,7 +30,8 @@ function isUppercase(char) {
  * @returns
  */
 function isAlphabet(char) {
-  return isLowercase(char) || isUppercase(char);
+  // return isLowercase(char) || isUppercase(char);
+  return char !== "<" && char !== ">";
 }
 
 let value = "";
@@ -155,22 +160,22 @@ function fail(input) {
   return fail;
 }
 
-function parseHTML(str) {
-  // <div></div>
-  let state = start;
+// function parseHTML(str) {
+//   // <div></div>
+//   let state = start;
 
-  for (const char of str) {
-    // console.log(state.name, char);
-    state = state(char);
-  }
-  state = state(EOF);
-  if (state === success) {
-    // 状态成功
-    return true;
-  } else if (state === fail) {
-    return false;
-  }
-}
+//   for (const char of str) {
+//     // console.log(state.name, char);
+//     state = state(char);
+//   }
+//   state = state(EOF);
+//   if (state === success) {
+//     // 状态成功
+//     return true;
+//   } else if (state === fail) {
+//     return false;
+//   }
+// }
 
 function checkHTML(str) {
   // <div></div>
@@ -183,11 +188,55 @@ function checkHTML(str) {
   state = state(EOF);
   if (state === success) {
     // 状态成功
-    console.log("=====list", list);
+    // console.log("=====list", list);
     return true;
   } else if (state === fail) {
     return false;
   }
+}
+
+function parseHTML(str) {
+  function start(input) {
+    if (input === EOF) {
+      return end;
+    } else if (isAlphabet(input)) {
+      return getTextNode;
+    } else if (isSpace(input)) {
+      return space;
+    } else if (input === "<") {
+      return tagStart;
+    }
+  }
+
+  function getTextNode(input) {
+    if (input === EOF) {
+      return end;
+    } else if (isAlphabet(input)) {
+      return getTextNode;
+    } else if (input === "<") {
+      return tagStart;
+    }
+  }
+  function space(input) {
+    if (input === EOF) {
+    }
+  }
+
+  function tagStart(input) {}
+
+  function end(input) {
+    console.log("end");
+  }
+
+  let state = start();
+  let value = "";
+  let list = [];
+
+  for (const char of str) {
+    state = state(char);
+  }
+  state(EOF);
+  console.log(value);
 }
 
 module.exports = {
