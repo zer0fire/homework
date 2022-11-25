@@ -21,15 +21,7 @@ function start(input) {
 
 function findA(char) {
   if (char === "b") {
-    return findB;
-  } else {
-    return start(char);
-  }
-}
-
-function findB(char) {
-  if (char === "a") {
-    return findC;
+    return findD;
   } else {
     return start(char);
   }
@@ -46,6 +38,8 @@ function findC(char) {
 function findD(char) {
   if (char === "c") {
     return succeed;
+  } else if (char === "a") {
+    return findC;
   } else {
     return findB(char);
   }
@@ -63,22 +57,41 @@ function strStr(source, needle) {
   return -1;
 }
 
-// function genState(needle) {
-//   function originState(condition, lastState, input) {
-//     if (input === condition) {
-//       return succeed;
-//     } else {
-//       return fail;
-//     }
-//   }
-//   // 下一状态，转移条件
-//   let state = succeed;
-//   for (let j = needle.length - 1; j >= 0; j--) {
-//     let lastState = state;
-//     state = originState.bind(null, needle[j], lastState);
-//   }
-//   return state;
-// }
+function findX(condition, nextState) {
+  return function findNext(char) {
+    if (char === condition) {
+      return nextState;
+    } else {
+      return start;
+    }
+  };
+}
+
+function genState(needle) {
+  function originState(condition, nextState, input) {
+    if (condition) {
+      return nextState;
+    } else {
+      return start;
+    }
+  }
+
+  function start(condition, nextState, input) {
+    if (input === condition) {
+      return nextState;
+    } else {
+      return start;
+    }
+  }
+
+  // 下一状态，转移条件
+  let state = succeed;
+  for (let j = needle.length - 1; j >= 0; j--) {
+    let lastState = state;
+    state = originState.bind(null, needle[j], start);
+  }
+  return state;
+}
 
 module.exports = {
   strStr,
