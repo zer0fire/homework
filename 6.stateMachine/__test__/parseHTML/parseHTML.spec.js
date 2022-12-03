@@ -1,4 +1,4 @@
-const { parseHTML, checkHTML } = require("../parseHTML");
+const { parseHTML, checkHTML } = require("../../parseHTML/parseHTML");
 
 describe("parse HTML", () => {
   test("normal node", () => {

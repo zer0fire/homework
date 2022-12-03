@@ -1,6 +1,3 @@
-function succeed() {
-  throw new Error("illegal succeed");
-}
 // i: ababcaabc
 // j:       ababcaabc
 //            ^
@@ -15,102 +12,16 @@ function succeed() {
 // 从状态机的角度理解 kmp 或者其他动态规划题，好像就是限定状态不能无限转移而是有规律的转移，
 // 这个规律不一而足，有可能是根据一个公式或者公式的叠加，但是为什么要这么做却不清楚，只能说是目前按照这个规律去做事了
 
-// function find0(input) {
-//   if (input === "a") {
-//     return find1;
-//   } else {
-//     return find0;
-//   }
-// }
-
-// function find1(input) {
-//   if (input === "a") {
-//     return find1;
-//   } else if (input === "b") {
-//     return find2;
-//   } else {
-//     return find0;
-//   }
-// }
-
-// function find2(input) {
-//   if (input === "a") {
-//     return find3;
-//   } else {
-//     return find0;
-//   }
-// }
-
-// function find3(input) {
-//   if (input === "a") {
-//     return find1;
-//   } else if (input === "b") {
-//     return find4;
-//   } else {
-//     return find0;
-//   }
-// }
-
-// function find4(input) {
-//   if (input === "a") {
-//     return find5;
-//   } else {
-//     return find0;
-//   }
-// }
-
-// function find5(input) {
-//   if (input === "c") {
-//     return succeed;
-//   } else if (input === "b") {
-//     return find4;
-//   } else if (input === "a") {
-//     return find1;
-//   } else {
-//     return find0;
-//   }
-// }
-
-// function start(input) {
-//   if (input === "a") {
-//     return find1;
-//   } else {
-//     return start;
-//   }
-// }
-
-// function find1(char) {
-//   if (char === "b") {
-//     return find3;
-//   } else {
-//     return start(char);
-//   }
-// }
-
-// function find2(char) {
-//   if (char === "b") {
-//     return find3;
-//   } else {
-//     return start(char);
-//   }
-// }
-
-// function find3(char) {
-//   if (char === "c") {
-//     return succeed;
-//   } else if (char === "a") {
-//     return find2;
-//   } else {
-//     return start(char);
-//   }
-// }
-
-// { a: nextStateA, b: nextStateB }
+/**
+ * @param {string} haystack
+ * @param {string} needle
+ * @return {number}
+ */
 
 function strStr(source, needle) {
   let start;
-  const allStates = [];
   let next = [0, 0];
+  const allStates = [];
 
   function findX(map, reconsume, n) {
     return function findNext(char) {
@@ -127,41 +38,44 @@ function strStr(source, needle) {
       }
     };
   }
+  function succeed() {
+    throw new Error("illegal succeed");
+  }
 
-  function genState(needle) {
-    // 下一状态，转移条件
-    let state;
-    for (let j = 0; j < needle.length; j++) {
+  function genNext(pattern) {
+    let nextState;
+    function updateAllState(pattern, i) {
       const map = new Map();
-      map.set(needle[j], j + 1);
-      state = findX(map, j !== 0, next[j]);
-      allStates.push(state);
+      map.set(pattern[i], i + 1);
+      nextState = findX(map, i !== 0, next[i]);
+      allStates.push(nextState);
+    }
+    for (let i = 0, j = 0; i < pattern.length; i++) {
+      if (i < 1) {
+        // i = 0
+        updateAllState(pattern, i);
+      } else {
+        // i = 1, i < pattern.length
+        if (pattern[i] === pattern[j]) {
+          j++;
+          next[i + 1] = j;
+          updateAllState(pattern, i);
+        } else if (j === 0) {
+          next[i + 1] = 0;
+          updateAllState(pattern, i);
+        } else {
+          i--;
+          j = next[j];
+        }
+      }
     }
     start = allStates[0];
     allStates.push(succeed);
     return start;
   }
 
-  function genNext(pattern) {
-    for (let i = 1, j = 0; i < pattern.length; i++) {
-      if (pattern[i] === pattern[j]) {
-        j++;
-        next[i + 1] = j;
-      } else if (j === 0) {
-        next[i + 1] = 0;
-      } else {
-        i--;
-        j = next[j];
-      }
-    }
-  }
-  genNext(needle);
-  let state = genState(needle);
-  // let state = find0;
-
+  let state = genNext(needle);
   for (let i = 0; i < source.length; i++) {
-    // console.log(state.name, i, source[i]);
-    // console.log(state, i, source[i]);
     state = state(source[i]);
     if (state === succeed) {
       return i - (needle.length - 1);
