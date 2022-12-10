@@ -44,7 +44,7 @@ function strStr(source, needle) {
 
   function genNext(pattern) {
     let nextState;
-    function updateAllState(pattern, i) {
+    function updateState(pattern, i) {
       const map = new Map();
       map.set(pattern[i], i + 1);
       nextState = findX(map, i !== 0, next[i]);
@@ -53,16 +53,16 @@ function strStr(source, needle) {
     for (let i = 0, j = 0; i < pattern.length; i++) {
       if (i < 1) {
         // i = 0
-        updateAllState(pattern, i);
+        updateState(pattern, i);
       } else {
         // i = 1, i < pattern.length
         if (pattern[i] === pattern[j]) {
           j++;
           next[i + 1] = j;
-          updateAllState(pattern, i);
+          updateState(pattern, i);
         } else if (j === 0) {
           next[i + 1] = 0;
-          updateAllState(pattern, i);
+          updateState(pattern, i);
         } else {
           i--;
           j = next[j];
