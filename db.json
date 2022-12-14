@@ -1,0 +1,33 @@
+{
+  "name": "homework",
+  "list": [
+    {
+      "type": "base",
+      "name": "1.parse"
+    },
+    {
+      "type": "base",
+      "name": "6.stateMachine"
+    },
+    {
+      "type": "base",
+      "name": "7.client"
+    },
+    {
+      "type": "webpack",
+      "name": "2.tree-shaking"
+    },
+    {
+      "type": "webpack",
+      "name": "3.walk"
+    },
+    {
+      "type": "vue",
+      "name": "4.VueSourceCode"
+    },
+    {
+      "type": "react",
+      "name": "5.mini-react"
+    }
+  ]
+}

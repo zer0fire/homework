@@ -12,7 +12,8 @@ const client = net.createConnection({ port: 8000, host: "localhost" }, () => {
   // 第三行开始时是 KV 对，Header
   // 中间可以有空行
   // 空行后面是 http body
-  //   400 bad request
+  // 400 bad request
+  // client.write(`GET / HTTP/1.1\r\n\r\n`);
   client.write(
     "GET / HTTP/1.1\r\n" +
       "Host: localhost\r\n" +
@@ -20,8 +21,8 @@ const client = net.createConnection({ port: 8000, host: "localhost" }, () => {
       "\r\n"
     //   "field1=aaa&code=x%3D1\r\n" +
     //   "\r\n"
+    // `POST / HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-ww-form-urlencoded\r\n\r\nfield1=aaa&code=x%3D1\r\n\r\n`
   );
-  // `POST / HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-ww-form-urlencoded\r\n\r\nfield1=aaa&code=x%3D1\r\n\r\n`
   client.end();
 });
 client.on("data", (data) => {
@@ -30,7 +31,7 @@ client.on("data", (data) => {
   //   client.end();
   //   console.log("====data:", data);
   parser.write(data.toString());
-  console.log(parser.result);
+  console.log(parser);
 });
 client.on("end", () => {
   console.log("disconnected from server");

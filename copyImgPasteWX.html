@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+  </head>
+  <body>
+    <button id="btn">复制图片</button>
+
+    <main>
+      <h1>Home page</h1>
+      <img
+        id="img"
+        width="200px"
+        src="https://pic1.zhimg.com/50/v2-a9ea7996e235930c9bbdeec5ae48d3e0_hd.jpg?source=1940ef5c"
+        alt=""
+      />
+      <div>测试文本</div>
+    </main>
+    <script>
+      let btn = document.querySelector("#btn");
+      let img = document.querySelector("#img");
+      btn.addEventListener(
+        "click",
+        async () => {
+          const res = await getImageBase64Data(img.src);
+          const data = await fetch(res);
+          const blob = await data.blob();
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              [blob.type]: blob,
+            }),
+          ]);
+          // await navigator.clipboard.writeText("Hello");
+          alert("复制成功");
+        },
+        false
+      );
+
+      function getImageBase64Data(imgSrc) {
+        function getBase64(img) {
+          var canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          var ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          var dataURL = canvas.toDataURL("image/png");
+          return dataURL;
+        }
+
+        var p = new Promise(function (resolve, reject) {
+          var image = new Image();
+          image.crossOrigin = "Anonymous";
+          image.src = imgSrc;
+
+          image.onload = function () {
+            var imageBase64Data = getBase64(image);
+
+            resolve(imageBase64Data);
+          };
+        });
+        return p;
+      }
+    </script>
+  </body>
+</html>
