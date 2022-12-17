@@ -30,9 +30,13 @@ client.on("data", (data) => {
   //   console.log(data.toString());
   //   client.end();
   //   console.log("====data:", data);
+  // 流式处理，接收多少就写多少
+  // 事件模式
   parser.write(data.toString());
   console.log(parser);
+  console.log(data.toString());
 });
 client.on("end", () => {
+  // parser.end();
   console.log("disconnected from server");
 });
