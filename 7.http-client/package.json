@@ -1,0 +1,17 @@
+{
+  "name": "7.http-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bodyParser.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "jest --watch",
+    "cover": "jest --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.3.1"
+  }
+}

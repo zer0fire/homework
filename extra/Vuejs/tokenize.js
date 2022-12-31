@@ -267,3 +267,98 @@ function parseChildren(context, ancestors) {
   }
   return nodes;
 }
+
+/*
+// 模板
+<div><p>Vue</p><p>Template</p></div>
+// 编译结果的渲染函数
+function render() {
+	return h('div', [
+    h('p', 'Vue'),
+    h('p', 'Template')
+  ])
+}
+*/
+
+// 描述函数声明的语句节点
+const FunctionDeclNode = {
+  type: "FunctionDecl", // 代表该节点是函数声明
+  id: {
+    type: "Identifier",
+    name: "render", // render 函数
+  },
+  params: [],
+  body: [
+    {
+      type: "ReturnStatement",
+      return: null, // 返回内容
+    },
+  ],
+};
+
+const CallExp = {
+  type: "CallExpression",
+  callee: {
+    type: "Identifier",
+    name: "h",
+  },
+  arguments: [],
+};
+
+const Str = {
+  type: "StringLiteral",
+  value: "div",
+};
+
+const Arr = {
+  type: "ArrayExpression",
+  elements: [],
+};
+
+function createStringLiteral(value) {
+  return {
+    type: "StringLiteral",
+    value,
+  };
+}
+function createIdentifier(name) {
+  return {
+    type: "Identifier",
+    name,
+  };
+}
+function createArrayExpression(elements) {
+  return {
+    type: "ArrayExpression",
+    elements,
+  };
+}
+function createCallExpression(callee, arguments) {
+  return {
+    type: "CallExpression",
+    callee: createIdentifier(callee),
+    arguments,
+  };
+}
+
+function transformText(node) {
+  if (node.type !== "Text") {
+    return;
+  }
+  node.jsNode = createStringLiteral(node.content);
+}
+
+function transformElement(node) {
+  return () => {
+    if (node.type !== "Element") {
+      return;
+    }
+    const callExp = createCallExpression("h", [createStringLiteral(node.tag)]);
+    node.children.length === 1
+      ? callExp.arguments.push(node.children[0].jsNode)
+      : callExp.arguments.push(
+          createArrayExpression(node.children.map((c) => c.jsNode))
+        );
+    node.jsNode = callExp;
+  };
+}

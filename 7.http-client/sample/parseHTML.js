@@ -1,3 +1,5 @@
+// https://html.spec.whatwg.org/multipage/parsing.html#data-state
+//
 function isUpperAlpha(input) {
   return (
     input.charCodeAt() < "Z".charCodeAt() && input.charCodeAt() > "A".charCodeAt
@@ -58,11 +60,24 @@ function isSolidus(input) {
   return input === "/";
 }
 
+function isQuotationMark(input) {
+  return input === '"';
+}
+function isApostrophe(input) {
+  return input === "'";
+}
+
 function parseHTML(str) {
   const EOF = Symbol("EOF");
   let currentToken = null;
   let currentAttribute = null;
-  let canEmit = false;
+  let stack = [];
+  let mode = "DATA";
+  // RCDATA, RAWTEXT, SCRIPTDATA, PLAINTEXT CDATA
+
+  function emit(token) {
+    stack.push(token);
+  }
 
   function succeed() {
     throw new Error("illegal succeed call");
@@ -78,13 +93,13 @@ function parseHTML(str) {
       return tagOpen;
     } else if (input === EOF) {
       currentToken = { type: EOF };
-      canEmit = true;
+      emit(currentToken);
       return succeed;
     } else if (input === null) {
       throw new Error("unexpected-null-character parse error.");
     } else {
       currentToken = { type: "character", data: input };
-      canEmit = true;
+      emit(currentToken);
       return start;
     }
   }
@@ -105,8 +120,8 @@ function parseHTML(str) {
       throw new Error("eof-before-tag-name parse error.");
       // Emit (发出) a U+003C LESS-THAN SIGN character (字符) token and an end-of-file token.
     } else {
-      data(input);
-      // throw new Error("invalid-first-character-of-tag-name parse error.");
+      console.error("invalid-first-character-of-tag-name parse error.");
+      start(input);
       // Emit (发出) a U+003C LESS-THAN SIGN character (字符) token. Reconsume in the data state.
     }
   }
@@ -125,7 +140,10 @@ function parseHTML(str) {
       return beforeAttributeName;
     } else if (isSolidus(input)) {
     } else if (isGreaterThanSign(input)) {
-      canEmit = true;
+      if (currentToken.tagName === "textarea") {
+        mode = "RCDATA";
+      }
+      emit(currentToken);
       return start;
     } else if (isUpperAlpha(input)) {
       currentToken.tagName += input.toLowerCase();
@@ -145,27 +163,124 @@ function parseHTML(str) {
   function beforeAttributeName(input) {
     if (isSpace(input)) {
       return beforeAttributeName;
-    } else if (isAlphabet(input)) {
+    } else if (isSolidus(input) || isGreaterThanSign(input) || input === EOF) {
+      return afterAttributeName(input);
+    } else if (isEqual(input)) {
+      throw new Error(
+        "unexpected-equals-sign-before-attribute-name parse error."
+      );
+    } else {
       currentAttribute = { name: "", value: "" };
       currentToken.attributes.push(currentAttribute);
       return attributeName(input);
-    } else if (isGreaterThanSign(input)) {
-      return afterAttributeName;
     }
   }
   function attributeName(input) {
     // class="container"
     //
-    if (isSpace(input)) {
+    if (
+      isSpace(input) ||
+      isSolidus(input) ||
+      isGreaterThanSign(input) ||
+      input === EOF
+    ) {
+      return afterAttributeName(input);
     } else if (isEqual(input)) {
-    } else if (isAlphabet(input)) {
+      return beforeAttributeValue;
+    } else if (isUpperAlpha(input)) {
       currentAttribute.name += input.toLowerCase();
+    } else if (input === null) {
+      throw new Error("unexpected-null-character parse error.");
+    } else if (
+      isQuestionMark(input) ||
+      isApostrophe(input) ||
+      isLessThanSign(input)
+    ) {
+    } else {
+      currentAttribute.name += input;
     }
   }
-  function afterAttributeName(input) {}
-  function beforeAttributeValue(input) {}
-  function attributeValue(input) {}
-  function afterAttributeValue(input) {}
+  function afterAttributeName(input) {
+    if (isSpace(input)) {
+      return afterAttributeName;
+    } else if (isSolidus(input)) {
+      return selfClosingStartTag;
+    } else if (isEqual(input)) {
+      return beforeAttributeValue;
+    } else if (isGreaterThanSign(input)) {
+      return start;
+    } else if (input === EOF) {
+      throw new Error("eof-in-tag parse error.");
+    } else {
+      currentAttribute = { name: "", value: "" };
+      currentToken.attributes.push(currentAttribute);
+      return attributeName(input);
+    }
+  }
+  function beforeAttributeValue(input) {
+    if (isSpace(input)) {
+      return beforeAttributeValue;
+    } else if (isQuotationMark(input)) {
+      return attributeValueDoubleQuote;
+    } else if (isApostrophe(input)) {
+      return attributeValueSingleQuote;
+    } else if (isGreaterThanSign(input)) {
+      throw new Error("missing-attribute-value parse error.");
+    } else {
+      return attributeValueUnquote(input);
+    }
+  }
+
+  function attributeValueDoubleQuote(input) {
+    if (isQuotationMark(input)) {
+      return afterAttributeValue;
+    } else if (isAmpersand(input)) {
+    } else if (input === null) {
+    } else if (input === EOF) {
+    } else {
+      currentAttribute.value += input;
+      return attributeValueDoubleQuote;
+    }
+  }
+  function attributeValueSingleQuote(input) {
+    if (isApostrophe(input)) {
+      return afterAttributeValue;
+    } else if (isAmpersand(input)) {
+    } else if (input === null) {
+    } else if (input === EOF) {
+    } else {
+      currentAttribute.value += input;
+      return attributeValueSingleQuote;
+    }
+  }
+  // function attributeValueUnquote(input) {
+  //   if (is) {
+  //   } else if (isAmpersand(input)) {
+  //   } else if (input === null) {
+  //   } else if (input === EOF) {
+  //   } else {
+  //   }
+  // }
+  // function attributeValue(input) {}
+  function afterAttributeValue(input) {
+    if (isSpace(input)) {
+      return beforeAttributeName;
+    } else if (isSolidus(input)) {
+      return selfClosingStartTag;
+    } else if (isGreaterThanSign(input)) {
+      if (currentToken.tagName === "textarea") {
+        mode = "RCDATA";
+      }
+      emit(currentToken);
+      return start;
+    } else if (input === EOF) {
+      console.error("eof-in-tag parse error.");
+      return;
+    } else {
+      console.error("missing-whitespace-between-attributes parse error.");
+      return beforeAttributeName(input);
+    }
+  }
 
   function getTextNode(input) {
     if (input === EOF) {
@@ -178,8 +293,6 @@ function parseHTML(str) {
   }
 
   let state = start();
-  let value = "";
-  let list = [];
 
   for (const input of str) {
     state = state(input);

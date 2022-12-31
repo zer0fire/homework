@@ -4,6 +4,8 @@
 // Keep-Alive: timeout=5
 // Content-Length: 0
 
+const ChunkedBodyParser = require("./bodyParser");
+
 // const Stream = require("node:stream");
 const EOF = Symbol("EOF");
 class Parser {
@@ -19,7 +21,9 @@ class Parser {
     this.currentHeaderValue = "";
     this.body = "";
     this.bodyLength = "";
+    this.contentLen = 0;
     this.messageNumber = "";
+    this.bodyParser = new ChunkedBodyParser();
   }
 
   receiveHttpVersion(c) {
@@ -107,7 +111,8 @@ class Parser {
   checkEmptyLine(input) {
     if (input === "\r") {
       // body 的逻辑
-      return this.readBody;
+      console.log("body");
+      return body;
     } else {
       // reconsume
       return this.readHeaderKey(input);
@@ -121,6 +126,7 @@ class Parser {
     if (input === "\n") {
       return this.readContent;
     } else if (input === "\r") {
+      this.contentLen = parseInt(this.bodyLength, 16);
       return this.readLength;
     } else {
       this.bodyLength += input;
@@ -128,10 +134,11 @@ class Parser {
     }
   }
   readContent(input) {
-    if (input === "\r") {
+    if (this.contentLen <= 0) {
       return this.readNumber;
     } else {
       this.body += input;
+      this.contentLen--;
       return this.readContent;
     }
   }
@@ -162,7 +169,7 @@ class Parser {
     for (let i = 0; i < data.length; i++) {
       // console.log(this.state.name);
       // console.log(data[i]);
-      this.state = this.state(data[i].toString());
+      this.state = this.state.call(this, data[i].toString());
     }
     console.log("========", this.protocol, this.code, this.message);
   }
@@ -171,7 +178,14 @@ class Parser {
   }
 }
 
+function body(input) {
+  this.bodyParser.write(input);
+  return body;
+}
+
 module.exports = Parser;
+
+// TODO: 问题：html 的几个模式如何切换 plaintext rawtext rcdata cdata
 
 // 文件相关，进程相关，流相关，http 相关
 // 互相调的东西是高内聚，低耦合

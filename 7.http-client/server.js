@@ -6,7 +6,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 
 // const readStream = fs.createReadStream(__dirname + "/sample/sample.txt");
-const buffer = fs.readFileSync(__dirname + "/sample/index.html");
+const buffer = fs.readFileSync(__dirname + "/sample/index2.html");
 
 // stream 流
 // 写流
@@ -30,6 +30,9 @@ const server = http.createServer((req, res) => {
   // readStream.pipe(res);
 
   res.write(buffer.toString());
+  res.write(buffer.toString());
+  res.write(buffer.toString());
+  // res.write(buffer.toString());
   // readStream.on("data", (data) => {
   //   res.write(data);
   // });
