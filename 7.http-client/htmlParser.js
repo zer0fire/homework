@@ -1,33 +1,18 @@
 const EOF = Symbol("EOF");
 
-class HTMLParser {
-  constructor() {
-    this.state = data;
-    this.currentToken = null;
-    this.currentAttribute = null;
-    this.stack = [];
-    this.mode = "DATA";
-    // RCDATA, RAWTEXT, SCRIPTDATA, PLAINTEXT CDATA
-  }
-  end(input) {}
-  write(data) {
-    for (let i = 0; i < data.length; i++) {
-      console.log(this.state.name, data[i]);
-      // console.log(data[i]);
-      this.state = this.state.call(this, data[i].toString());
-    }
-  }
-}
+// PPT -> VB -> SVG -> 操作节点 -> 改变颜色
 
 // https://html.spec.whatwg.org/multipage/parsing.html#data-state
 //
 function isUpperAlpha(input) {
+  if (typeof input !== "string") return false;
   return (
     input.charCodeAt() < "Z".charCodeAt() &&
     input.charCodeAt() > "A".charCodeAt()
   );
 }
 function isLowerAlpha(input) {
+  if (typeof input !== "string") return false;
   return (
     input.charCodeAt() < "z".charCodeAt() &&
     input.charCodeAt() > "a".charCodeAt()
@@ -35,63 +20,84 @@ function isLowerAlpha(input) {
 }
 
 function isAlphabet(input) {
+  if (typeof input !== "string") return false;
   return isUpperAlpha(input) || isLowerAlpha(input);
 }
 
 function isTabulation(input) {
+  if (typeof input !== "string") return false;
   return input === "\t";
 }
 function isLineFeed(input) {
+  if (typeof input !== "string") return false;
   return input === "\r";
 }
 function isFormFeed(input) {
+  if (typeof input !== "string") return false;
   return input === "\n";
 }
+
+function isSpaceChar(input) {
+  if (typeof input !== "string") return false;
+  return input === " ";
+}
 function isSpace(input) {
+  if (typeof input !== "string") return false;
   return (
-    input.charCodeAt() === "\t".charCodeAt() ||
-    input.charCodeAt() === "\n".charCodeAt ||
-    input.charCodeAt() === "\r".charCodeAt() ||
-    input.charCodeAt() === " ".charCodeAt
+    isTabulation(input) ||
+    isFormFeed(input) ||
+    isLineFeed(input) ||
+    isSpaceChar(input)
   );
 }
 
 function isExclamationMark(input) {
+  if (typeof input !== "string") return false;
   return input === "!";
 }
 
 function isEqual(input) {
+  if (typeof input !== "string") return false;
   return input === "=";
 }
 
 function isLessThanSign(input) {
+  if (typeof input !== "string") return false;
   return input === "<";
 }
 function isGreaterThanSign(input) {
+  if (typeof input !== "string") return false;
   return input === ">";
 }
 
 function isQuestionMark(input) {
+  if (typeof input !== "string") return false;
   return input === "?";
 }
 
 function isSolidus(input) {
+  if (typeof input !== "string") return false;
   return input === "/";
 }
 
 function isAmpersand(input) {
+  if (typeof input !== "string") return false;
   return input === "&";
 }
 
 function isQuotationMark(input) {
+  if (typeof input !== "string") return false;
   return input === '"';
 }
 function isApostrophe(input) {
+  if (typeof input !== "string") return false;
   return input === "'";
 }
 
 function emit(token) {
   this.stack.push(token);
+  this.syntaxParser.write(token);
+  // this.trigger('data')
 }
 
 function succeed() {
@@ -105,8 +111,13 @@ function characterReference(input) {
   // } else {
   //   return this.returnState(input)
   // }
+  // return characterReference;
+  throw new Error("characterReference not complete");
 }
-function markupDeclarationOpen() {}
+function markupDeclarationOpen() {
+  // return markupDeclarationOpen;
+  throw new Error("markupDeclarationOpen not complete");
+}
 
 function data(input) {
   if (isAmpersand(input)) {
@@ -118,7 +129,7 @@ function data(input) {
   } else if (isLessThanSign(input)) {
     return tagOpen;
   } else if (input === EOF) {
-    this.currentToken = { type: EOF };
+    this.currentToken = { type: "EOF" };
     emit.call(this, this.currentToken);
     return succeed;
   } else if (input === null) {
@@ -137,7 +148,7 @@ function tagOpen(input) {
     return endTagOpen;
   } else if (isAlphabet(input)) {
     this.currentToken = { type: "start tag", tagName: "", attributes: [] };
-    console.log("====currentToken", this.currentToken);
+    // console.log("====currentToken", this.currentToken);
     return tagName.call(this, input);
   } else if (isQuestionMark(input)) {
     throw new Error(
@@ -166,6 +177,7 @@ function tagName(input) {
   if (isSpace(input)) {
     return beforeAttributeName;
   } else if (isSolidus(input)) {
+    return selfClosingStartTag;
   } else if (isGreaterThanSign(input)) {
     if (this.currentToken.tagName === "textarea") {
       mode = "RCDATA";
@@ -182,7 +194,7 @@ function tagName(input) {
   } else if (input === EOF) {
     // eof-in-tag parse error. Emit (发出) an end-of-file token.
   } else {
-    console.log(this.currentToken, input);
+    // console.log(this.currentToken, input);
     this.currentToken.tagName += input;
     return tagName;
   }
@@ -192,7 +204,7 @@ function beforeAttributeName(input) {
   if (isSpace(input)) {
     return beforeAttributeName;
   } else if (isSolidus(input) || isGreaterThanSign(input) || input === EOF) {
-    return afterAttributeName(input);
+    return afterAttributeName.call(this, input);
   } else if (isEqual(input)) {
     throw new Error(
       "unexpected-equals-sign-before-attribute-name parse error."
@@ -217,6 +229,7 @@ function attributeName(input) {
     return beforeAttributeValue;
   } else if (isUpperAlpha(input)) {
     this.currentAttribute.name += input.toLowerCase();
+    return attributeName;
   } else if (input === null) {
     throw new Error("unexpected-null-character parse error.");
   } else if (
@@ -226,10 +239,20 @@ function attributeName(input) {
   ) {
   } else {
     this.currentAttribute.name += input;
+    return attributeName;
   }
 }
-function selfClosingStartTag() {
-  return selfClosingStartTag;
+function selfClosingStartTag(input) {
+  if (isGreaterThanSign(input)) {
+    this.currentToken.isSelfClosingTag = true;
+    emit.call(this, this.currentToken);
+    return data;
+  } else if (input === EOF) {
+    throw new Error("eof-in-tag parse error.");
+  } else {
+    console.error("unexpected-solidus-in-tag parse error.");
+    return beforeAttributeName.call(this, input);
+  }
 }
 function afterAttributeName(input) {
   if (isSpace(input)) {
@@ -239,6 +262,8 @@ function afterAttributeName(input) {
   } else if (isEqual(input)) {
     return beforeAttributeValue;
   } else if (isGreaterThanSign(input)) {
+    emit.call(this, this.currentToken);
+
     return data;
   } else if (input === EOF) {
     throw new Error("eof-in-tag parse error.");
@@ -305,25 +330,141 @@ function afterAttributeValue(input) {
     emit.call(this, this.currentToken);
     return data;
   } else if (input === EOF) {
-    console.error("eof-in-tag parse error.");
-    return;
+    throw new Error("eof-in-tag parse error.");
+    // return
   } else {
     console.error("missing-whitespace-between-attributes parse error.");
     return beforeAttributeName.call(this, input);
   }
 }
 
-function getTextNode(input) {
-  if (input === EOF) {
-    return succeed;
-  } else if (isAlphabet(input)) {
-    return getTextNode;
-  } else if (isLessThanSign(input)) {
-    return tagStart;
+class HTMLParser {
+  constructor() {
+    this.state = data;
+    this.currentToken = null;
+    this.currentAttribute = null;
+    this.stack = [];
+    this.mode = "DATA";
+    this.syntaxParser = new HtmlSyntaxParser();
+    // RCDATA, RAWTEXT, SCRIPTDATA, PLAINTEXT CDATA
+  }
+  end() {
+    this.state.call(this, EOF);
+    // this.trigger('end')
+  }
+  write(data) {
+    for (let i = 0; i < data.length; i++) {
+      // console.log(this.state.name, data[i]);
+      // console.log(data[i]);
+      this.state = this.state.call(this, data[i].toString());
+    }
+    this.end();
+    // LR(0)
+    // LL(n)
+    // Lex 词法 + Syntax 句法 = Grammar 语法
+    // Lex 词法 + Syntax 语法 = Grammar 文法
+    // Chunked Html lexer 词法
+    // lex character => token
   }
 }
 
-const parser = new HTMLParser();
-parser.write("<div></div>");
+class HtmlSyntaxParser {
+  constructor() {
+    this.stack = [{ type: "document", children: [] }];
+    this.text = null;
+  }
 
-module.exports = HTMLParser;
+  write(token) {
+    // p 与 p 之间
+    // xhtml
+    // console.log(JSON.stringify(this.stack));
+    // leetcode 括号匹配
+    // 状态机 -> kmp -> 自动生成状态机 -> 多层状态机 -> html lr0
+    if (token.type === "start tag") {
+      this.text = null;
+      const parent = this.stack[this.stack.length - 1];
+      const element = {
+        type: "element",
+        tagName: token.tagName,
+        children: [],
+      };
+      parent.children.push(element);
+      // element.parent = parent;
+      this.stack.push(element);
+    } else if (token.type === "end tag") {
+      this.text = null;
+      if (this.stack[this.stack.length - 1].tagName !== token.tagName) {
+        throw new Error("tag not match");
+      }
+      this.stack.pop();
+    } else if (token.type === "character") {
+      if (this.text === null) {
+        const parent = this.stack[this.stack.length - 1];
+        this.text = { type: "text", content: "" };
+        parent.children.push(this.text);
+        // this.text.parent = parent;
+      }
+      this.text.content += token.data;
+    }
+  }
+}
+
+// [
+//   {
+//     type: "document",
+//     children: [
+//       {
+//         type: "element",
+//         tagName: "div",
+//         children: [{ type: "text", content: "text" }],
+//       },
+//     ],
+//   },
+// ];
+const parser = new HTMLParser();
+parser.write(`<div checked>text</div>`);
+
+module.exports = {
+  HTMLParser,
+  isAlphabet,
+  isAmpersand,
+  isApostrophe,
+  isEqual,
+  isExclamationMark,
+  isFormFeed,
+  isGreaterThanSign,
+  isLessThanSign,
+  isLineFeed,
+  isLowerAlpha,
+  isQuestionMark,
+  isQuotationMark,
+  isSolidus,
+  isSpace,
+  isSpaceChar,
+  isTabulation,
+  isUpperAlpha,
+  succeed,
+  EOF,
+};
+
+// 可以测试
+// 全局变量 - store
+// RxJs + Vue React
+// UI 和 State
+// State 和 State
+// Model 联动 Rxjs
+// V-Model 联动 Vue 不应该存储
+// view 机制 - 布道 - cr 也是可以交接任务等等的前提
+// 互相学习、互相理解业务、
+// cr 可以单元测试
+// 先规定不能做什么，赏罚
+
+// type -> 单测 -> cr -> 架构单测隔离
+
+// 企业系统、orm、财务人力等等
+// 一致性
+// 阿里 P8 叔叔 Rxjs
+// 康神 完美技术顾问 清华
+
+// 状态机 -> kmp -> 自动生成状态机 -> 多层状态机 -> html lr0
+// KMP 复习
