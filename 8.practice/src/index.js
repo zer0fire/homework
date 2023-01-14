@@ -8,17 +8,14 @@ const acorn = require("acorn");
 
 const analyze = (code) => {
   const ast = acorn.parse(code, { ecmaVersion: 7 });
-  const scopeStack = [];
-  const rootScope = new Scope({ name: "root" });
-  scopeStack.push(rootScope);
+  let currentScope = new Scope({ name: "root" });
 
   const allScope = [];
-  allScope.push(rootScope);
+  allScope.push(currentScope);
 
   const _defines = {};
   const definesStack = [_defines];
 
-  const _scope = rootScope;
   const _calls = {};
 
   function addDefines() {}
@@ -26,38 +23,39 @@ const analyze = (code) => {
   walk(ast, {
     enter: (node) => {
       if (node.type === "VariableDeclaration") {
+        node._defines = {};
         node.declarations.forEach((declare) => {
-          definesStack[definesStack.length - 1][declare.id.name] = true;
-          scopeStack[scopeStack.length - 1].add(declare.id.name);
+          //   const defines = definesStack[definesStack.length - 1];
+          //   defines[declare.id.name] = true;
+          node._defines[declare.id.name] = true;
+          _defines[declare.id.name] = true;
+          currentScope.add(declare.id.name);
         });
       } else if (
         node.type === "ArrowFunctionExpression" ||
         node.type === "IfStatement" ||
         node.type === "ForStatement"
       ) {
-        // console.log(`${node.id.name} => `)
-        // console.log(node)
-        const parent = scopeStack[scopeStack.length - 1];
+        const parent = currentScope;
         const childScope = new Scope({
           name: node,
           parent,
         });
         // parent.children.push(funcScope)
-        scopeStack.push(childScope);
-        definesStack.push({});
+        currentScope = childScope;
         // allScope.push(childScope);
+        definesStack.push({});
       } else if (node.type === "FunctionDeclaration") {
-        const parent = scopeStack[scopeStack.length - 1];
-        // console.log(node);
+        const parent = currentScope;
         parent.add(node.id.name);
         const childScope = new Scope({
           name: node,
           parent,
         });
         // parent.children.push(funcScope)
-        scopeStack.push(childScope);
-        definesStack.push({});
+        currentScope = childScope;
         // allScope.push(childScope);
+        definesStack.push({});
       }
       if (node.type === "ExpressionStatement") {
         _calls[node.expression.callee.name] = true;
@@ -71,14 +69,18 @@ const analyze = (code) => {
         node.type === "ForStatement"
       ) {
         // const currentScope = childScope.parent;
-        const currentScope = scopeStack.pop();
-        const currentDefines = definesStack.pop();
         node._scope = currentScope;
+        currentScope = currentScope.parent;
+        const currentDefines = definesStack.pop();
         node._defines = currentDefines;
+      }
+      if (node.type === "FunctionDeclaration") {
+        node._defines[node.id.name] = true;
+        _defines[node.id.name] = true;
       }
     },
   });
-  ast._scope = rootScope;
+  ast._scope = currentScope;
   //   return {
   //     _defines,
   //     _scope,
