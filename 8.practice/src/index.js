@@ -6,8 +6,9 @@ const acorn = require("acorn");
 // defines 加入
 // scope 替换 scope stack
 
-const analyze = (code) => {
-  const ast = acorn.parse(code, { ecmaVersion: 7 });
+const analyze = (ast, magicString) => {
+  console.log(magicString);
+  //   const ast = acorn.parse(code, { ecmaVersion: 7 });
   let currentScope = new Scope({ name: "root" });
 
   const allScope = [];
@@ -18,7 +19,7 @@ const analyze = (code) => {
 
   const _calls = {};
 
-  function addDefines() {}
+  //   function addDefines() {}
 
   walk(ast, {
     enter: (node) => {

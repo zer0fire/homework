@@ -1,4 +1,19 @@
 const { analyze } = require("../src/index.js");
+const MagicString = require("magic-string");
+const acorn = require("acorn");
+function getCode(code) {
+  const ast = acorn.parse(code, {
+    locations: true,
+    ranges: true,
+    sourceType: "module",
+    ecmaVersion: 7,
+  });
+  console.log(new MagicString(code));
+  return {
+    ast,
+    magicString: new MagicString(code),
+  };
+}
 
 describe("walk", () => {
   test("输出变量声明", () => {
@@ -8,7 +23,9 @@ const b = () => 'b'
 const c = () => 'c'
 a()
     `;
-    const ast = analyze(code);
+    const { ast, magicString } = getCode(code);
+
+    analyze(ast);
     expect(ast._defines).toEqual({
       // _defines
       a: true,
@@ -24,7 +41,9 @@ a()
       }
       `;
 
-    const ast = analyze(code);
+    const { ast, magicString } = getCode(code);
+
+    analyze(ast);
     expect(ast._scope.contains("a")).toBe(true);
     expect(ast._scope.findDefiningScope("a")).toEqual(ast._scope);
     expect(ast._scope.contains("f")).toBe(true);
