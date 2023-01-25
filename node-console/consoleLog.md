@@ -73,3 +73,9 @@ console.log(`
 // 循环改递归
 
 // code-style-switch
+
+console.log(
+  "This is %cMy stylish message",
+  "color: yellow; font-style: italic; background-color: blue;padding: 2px"
+);
+// https://developer.mozilla.org/en-US/docs/Web/API/console#outputting_text_to_the_console
