@@ -1,0 +1,29 @@
+{
+  "name": "danmuku-back-end",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next/font": "13.1.6",
+    "axios": "^1.2.5",
+    "eslint": "8.32.0",
+    "eslint-config-next": "13.1.6",
+    "hashlib": "^1.0.1",
+    "next": "13.1.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "sha256": "^0.2.0",
+    "typescript": "4.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.18",
+    "@types/react": "18.0.27",
+    "@types/react-dom": "18.0.10",
+    "@types/sha256": "^0.2.0"
+  }
+}
