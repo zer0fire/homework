@@ -51,4 +51,22 @@ function camelCase(value) {
   }
 }
 
+function pureCamelCase(value) {
+  if (typeof value === "string") {
+    return trans(value);
+  } else {
+    const keys = Object.keys(value);
+    const newValue = new value.constructor();
+    for (let key of keys) {
+      let newKey = trans(key);
+      if (typeof value[key] === "object") {
+        newValue[newKey] = pureCamelCase(value[key]);
+      } else {
+        newValue[newKey] = value[key];
+      }
+    }
+    return newValue;
+  }
+}
+
 camelCase(obj);

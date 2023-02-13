@@ -1,16 +1,3 @@
-function createElement(vnode) {
-  const node = document.createElement(vnode.tag);
-  const attrs = vnode.attrs;
-  for (let attr in attrs) {
-    node[attr] = attrs[attr];
-  }
-  return node;
-}
-
-function appendChild(parent, child) {
-  return parent.appendChild(child);
-}
-
 const vnode = {
   tag: "DIV",
   attrs: {
@@ -50,4 +37,16 @@ function render(vnode) {
   }
   console.log(node);
   return node;
+}
+function createElement(vnode) {
+  const node = document.createElement(vnode.tag);
+  const attrs = vnode.attrs;
+  for (let attr in attrs) {
+    node[attr] = attrs[attr];
+  }
+  return node;
+}
+
+function appendChild(parent, child) {
+  return parent.appendChild(child);
 }

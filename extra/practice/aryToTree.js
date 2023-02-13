@@ -82,7 +82,7 @@ const input = [
 function aryToTree(ary) {
   ary.sort((itemA, itemB) => itemA.id - itemB.id);
   let cacheMap = new Map();
-  let rootNode = ary[0];
+  let rootNode = Object.assign(ary[0]);
   for (let item of ary) {
     cacheMap.set(item.id, item);
     if (cacheMap.has(item.parentId)) {
