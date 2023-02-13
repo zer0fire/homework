@@ -293,8 +293,8 @@ function start(input) {}
 function end(input) {}
 
 // i: ababcaabc
-// j:       ababcaabc
-//            ^
+// j:  ababcaabc
+//     ^
 // n: 001201120
 // n = [0, 0, 0, 1, 2, 0, 1, 1, 2, 0]
 
@@ -335,6 +335,9 @@ function search(source, pattern) {
   }
   return -1;
 }
+
+// ("mississippi");
+// ("issip");
 
 module.exports = {
   search,
