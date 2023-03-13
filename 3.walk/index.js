@@ -9,6 +9,8 @@
 const acorn = require("acorn");
 const fs = require("fs");
 const { walk } = require("./walk");
+const analysis = require("./analysis");
+const MagicString = require("magic-string");
 
 // const code = fs.readFileSync("3.walk/source.js").toString();
 // const ast = acorn.parse(code, { ecmaVersion: 7 });
@@ -47,4 +49,6 @@ const Scope = require("./scope");
 module.exports = {
   walk,
   Scope,
+  analysis,
+  MagicString,
 };
