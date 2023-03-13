@@ -1,0 +1,55 @@
+body {
+  text-align: center;
+  background-color: #ddd;
+}
+
+#Container {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  width: 240px;
+  height: 239px;
+  margin: 0 auto;
+  margin-top: 20px;
+  border: 5px solid darkgoldenrod;
+  border-radius: 5px;
+}
+
+.backgroundImg {
+  width: 80px;
+  height: 80px;
+  box-sizing: border-box;
+  border: 2px solid darkgoldenrod;
+}
+
+#Button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #a2b598;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(#bdd1b4),
+    to(#a2b598)
+  );
+  background: -moz-linear-gradient(-90deg, #bdd1b4, #a2b598);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#BDD1B4', EndColorStr='#A2B598');
+}
+
+#Button:hover {
+  background: #bdd1b4;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(#a2b598),
+    to(#bdd1b4)
+  );
+  background: -moz-linear-gradient(-90deg, #a2b598, #bdd1b4);
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#A2B598', EndColorStr='#BDD1B4');
+}
+
+#Button:active {
+  background: #a2b598;
+}
