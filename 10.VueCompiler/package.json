@@ -1,0 +1,23 @@
+{
+  "name": "10.VueCompiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch",
+    "cover": "jest --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "acorn": "^8.8.2",
+    "electron": "^23.0.0",
+    "magic-string": "^0.30.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+    "jest": "^29.0.2",
+    "jest-environment-jsdom": "^29.0.2"
+  }
+}
