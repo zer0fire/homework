@@ -31,3 +31,10 @@
     - Vue2.7 响应式 API，内部还是 Vue2，性能上没改进，只是上了新语法
 
 `rollup src/reactivity/index.js -f iife -n Reactivity -o build/reactivity.js`
+
+# 为什么需要虚拟 DOM
+
+0. vue1.x 没有虚拟 DOM，template 编译成指令，导致内存会爆炸
+1. 为了不全量更新，只增量更新
+2. 为了 diff 算法
+3. DOM 太重，数据太多

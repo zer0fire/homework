@@ -1,0 +1,107 @@
+/**
+ * template -> ast -> render function (js function)
+ * 1. 解析 template -> ast 中间产物，生产 ast 对象，可以做很多事情
+ * 2. 转换 transform: ast -> ast 深加工，一种转换成另外一种 html ast -> js ast
+ * 3. 生成 ast -> render function
+ * isUnary ，自闭合
+ */
+
+/**
+ *
+ * @param {string} char
+ * @returns
+ */
+function isLowercase(char) {
+  const charCode = char.charCodeAt(0);
+  return charCode >= "a".charCodeAt(0) && charCode <= "z".charCodeAt(0);
+}
+
+/**
+ *
+ * @param {string} char
+ * @returns
+ */
+function isUppercase(char) {
+  const charCode = char.charCodeAt(0);
+  return charCode >= "A".charCodeAt(0) && charCode <= "Z".charCodeAt(0);
+}
+
+/**
+ *
+ * @param {string} char
+ * @returns
+ */
+function isAlphabet(char) {
+  // return isLowercase(char) || isUppercase(char);
+  return char !== "<" && char !== ">";
+}
+
+/**
+ * @flow
+ * @param {*} template
+ */
+export function parse(template) {
+  // 状态机
+
+  // 上下文，携带参数，或者获取 this 等，保存当前状态，提供一些工具函数
+  const context = {
+    source: template,
+  };
+
+  //   return [
+  //     {
+  //       tag: "div",
+  //       type: "Element",
+  //       children: [],
+  //       isUnary: false,
+  //     },
+  //   ];
+  return parseChildren(context, []);
+}
+
+/**
+ *
+ * @param {*} context
+ * @param {*} stack 判定节点内是否清空
+ */
+function parseChildren(context, stack) {
+  // 存储 ast 结果
+  const node = [];
+  const { source } = context;
+
+  let machine = start;
+  let i = 0;
+  // 开启状态机，
+  while (source && i < source.length) {
+    // isEnd 结束条件 错误停止或者解析到最后停止
+    // < 开始
+    // a-z 标签
+    // {{ 插值
+    // > 结束
+    // parseElement 专门解决 a-z
+    // parseInterpolation 专门解决插值
+    // parseTextNode 遇到文本节点
+    machine = machine(source[i]);
+  }
+
+  // 返回 nodes
+  return nodes;
+}
+
+const tag = [];
+let tagName = "";
+function start(char) {
+  if (char === "<") {
+    return tagStart;
+  } else {
+    return start;
+  }
+}
+function tagStart(char) {
+  if (isAlphabet(char)) {
+    tagName += char;
+    return tagStart;
+  } else if (char === ">") {
+    return start;
+  }
+}

@@ -1,0 +1,34 @@
+<style>
+  body {
+    margin: 0;
+    background-color: yellowgreen;
+  }
+</style>
+<div
+  style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 10rem;
+    color: black;
+  "
+>
+  <span id="clock"></span>
+</div>
+
+<script>
+  function updateTime() {
+    const now = new Date();
+    const hours = now.getHours().toString();
+    const minutes = now.getMinutes().toString();
+    let seconds = now.getSeconds().toString();
+    if (seconds.length === 1) {
+      seconds = "0" + seconds;
+    }
+    document.getElementById(
+      "clock"
+    ).textContent = `${hours}:${minutes}:${seconds}`;
+  }
+  setInterval(updateTime, 1000);
+</script>

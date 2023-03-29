@@ -5,16 +5,18 @@ import { activeEffect } from "./effect";
 const effectsMap = new Map();
 
 function track(target, key) {
-  let depsMap = effectsMap.get(target);
-  if (!depsMap) {
-    effectsMap.set(target, (depsMap = new Map()));
+  if (activeEffect) {
+    let depsMap = effectsMap.get(target);
+    if (!depsMap) {
+      effectsMap.set(target, (depsMap = new Map()));
+    }
+    let effects = depsMap.get(key);
+    if (!effects) {
+      depsMap.set(key, (effects = new Set()));
+    }
+    // 收集依赖
+    effects.add(activeEffect);
   }
-  let effects = depsMap.get(key);
-  if (!effects) {
-    depsMap.set(key, (effects = new Set()));
-  }
-  // 收集依赖
-  effects.add(activeEffect[activeEffect.length - 1]);
 }
 
 function trigger(target, key) {
@@ -23,7 +25,11 @@ function trigger(target, key) {
     let effects = deps.get(key);
     effects &&
       effects.forEach((fn) => {
-        fn && fn();
+        if (fn.options.scheduler) {
+          fn.options.scheduler(fn);
+        } else {
+          fn && fn();
+        }
       });
   }
 }

@@ -89,6 +89,24 @@ describe("mini-vue", () => {
     obj.foo = "fooooo";
     expect(arr[3]).toBe("fooooo");
   });
+
+  it("调度执行", () => {
+    const obj = reactive({ foo: 1 });
+    const arr = [];
+    jest.useFakeTimers(); // 开启模拟定时器
+    effect(() => arr.push(obj.foo), {
+      scheduler(fn) {
+        setTimeout(fn);
+      },
+    });
+    obj.foo++;
+    arr.push("over");
+
+    jest.runAllTimers(); // 等待所有定时器执行
+    expect(arr[0]).toBe(1);
+    expect(arr[1]).toBe("over");
+    expect(arr[2]).toBe(2);
+  });
 });
 
 // const obj = {foo: 'foo', bar: 'bar'}

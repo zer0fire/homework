@@ -10,10 +10,6 @@ function isLowercase(char) {
   return charCode >= "a".charCodeAt(0) && charCode <= "z".charCodeAt(0);
 }
 
-function isSpace(input) {
-  return input === " " || input === "\n" || input === "\r";
-}
-
 /**
  *
  * @param {string} char
@@ -32,6 +28,10 @@ function isUppercase(char) {
 function isAlphabet(char) {
   // return isLowercase(char) || isUppercase(char);
   return char !== "<" && char !== ">";
+}
+
+function isSpace(input) {
+  return input === " " || input === "\n" || input === "\r";
 }
 
 let value = "";
