@@ -32,8 +32,8 @@ function isUppercase(char) {
  * @returns
  */
 function isAlphabet(char) {
-  // return isLowercase(char) || isUppercase(char);
-  return char !== "<" && char !== ">";
+  return isLowercase(char) || isUppercase(char);
+  // return char !== "<" && char !== ">";
 }
 
 /**
@@ -66,8 +66,66 @@ export function parse(template) {
  */
 function parseChildren(context, stack) {
   // 存储 ast 结果
-  const node = [];
   const { source } = context;
+
+  const nodes = [];
+  let tagObj = null;
+
+  function start(char) {
+    if (char === "<") {
+      return tagOpen;
+    } else {
+      return start;
+    }
+  }
+
+  function tagOpen(char) {
+    if (char === "/") {
+      return tagEnd;
+    } else if (isAlphabet(char)) {
+      return tagStart(char);
+    } else {
+      return start;
+    }
+  }
+
+  function tagStart(char) {
+    if (isAlphabet(char)) {
+      if (!tagObj) {
+        tagObj = {
+          type: "tagStart",
+          name: "",
+        };
+      }
+      tagObj.name += char;
+      return tagStart;
+    } else if (char === ">") {
+      nodes.push(tagObj);
+      tagObj = null;
+      return start;
+    } else {
+      return start;
+    }
+  }
+
+  function tagEnd(char) {
+    if (isAlphabet(char)) {
+      if (!tagObj) {
+        tagObj = {
+          type: "tagEnd",
+          name: "",
+        };
+      }
+      tagObj.name += char;
+      return tagStart;
+    } else if (char === ">") {
+      nodes.push(tagObj);
+      tagObj = null;
+      return start;
+    } else {
+      return start;
+    }
+  }
 
   let machine = start;
   let i = 0;
@@ -81,27 +139,11 @@ function parseChildren(context, stack) {
     // parseElement 专门解决 a-z
     // parseInterpolation 专门解决插值
     // parseTextNode 遇到文本节点
-    machine = machine(source[i]);
+    machine = machine(source[i], context);
+    i++;
   }
 
   // 返回 nodes
+  console.log(nodes);
   return nodes;
-}
-
-const tag = [];
-let tagName = "";
-function start(char) {
-  if (char === "<") {
-    return tagStart;
-  } else {
-    return start;
-  }
-}
-function tagStart(char) {
-  if (isAlphabet(char)) {
-    tagName += char;
-    return tagStart;
-  } else if (char === ">") {
-    return start;
-  }
 }
