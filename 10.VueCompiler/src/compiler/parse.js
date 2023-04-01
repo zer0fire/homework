@@ -59,6 +59,34 @@ export function parse(template) {
   return parseChildren(context, []);
 }
 
+function combineTag(nodes, retNodes = []) {
+  // [
+  //   { type: "tagStart", name: "div" },
+  //   { type: "tagEnd", name: "div" },
+  // ];
+  let i = 0;
+  while (i < nodes.length) {
+    const tagNode = nodes[i];
+    if (tagNode && tagNode.type === "tagStart") {
+      const elementNode = {
+        tag: "div",
+        type: "Element",
+        children: [],
+        isUnary: false,
+      };
+      retNodes.push(elementNode);
+    } else if (tagNode && tagNode.type === "tagEnd") {
+      const lastEleNode = retNodes[retNodes.length - 1];
+      if (tagNode.name === lastEleNode.tag || lastEleNode.isUnary) {
+      } else {
+        throw new Error("unmatched tag");
+      }
+    }
+    i++;
+  }
+  return retNodes;
+}
+
 /**
  *
  * @param {*} context
@@ -142,8 +170,11 @@ function parseChildren(context, stack) {
     machine = machine(source[i], context);
     i++;
   }
-
+  // [{ tagStart, div}, {tagEnd, div}]
   // 返回 nodes
-  console.log(nodes);
-  return nodes;
+  // console.log({
+  //   nodes,
+  //   ele: combineTag(nodes),
+  // });
+  return combineTag(nodes);
 }
