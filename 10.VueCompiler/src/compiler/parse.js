@@ -76,6 +76,7 @@ function combineTag(nodes, retNodes = []) {
         children: [],
         isUnary: false,
       };
+      // 子状态机 - parseElement -> 内部循环，循环转递归
       cacheNode.push(elementNode);
       if (lastEleNode) {
         // 非顶层
