@@ -65,8 +65,10 @@ function combineTag(nodes, retNodes = []) {
   //   { type: "tagEnd", name: "div" },
   // ];
   let i = 0;
+  let cacheNode = [];
   while (i < nodes.length) {
     const tagNode = nodes[i];
+    const lastEleNode = cacheNode[cacheNode.length - 1];
     if (tagNode && tagNode.type === "tagStart") {
       const elementNode = {
         tag: "div",
@@ -74,10 +76,17 @@ function combineTag(nodes, retNodes = []) {
         children: [],
         isUnary: false,
       };
-      retNodes.push(elementNode);
+      cacheNode.push(elementNode);
+      if (lastEleNode) {
+        // 非顶层
+        lastEleNode.children.push(elementNode);
+      } else {
+        // 顶层
+        retNodes.push(elementNode);
+      }
     } else if (tagNode && tagNode.type === "tagEnd") {
-      const lastEleNode = retNodes[retNodes.length - 1];
       if (tagNode.name === lastEleNode.tag || lastEleNode.isUnary) {
+        cacheNode.pop();
       } else {
         throw new Error("unmatched tag");
       }
