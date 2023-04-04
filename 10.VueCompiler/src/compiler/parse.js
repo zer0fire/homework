@@ -204,14 +204,20 @@ function parseAttribute(context, node) {
 
 // 作业3 解析 {{}}
 function parseInterpolation(context, stack) {
-  const [interpolation, content] = /^{{([^<]*)}}/i.exec(context.source);
-  const lastNode = stack[stack.length - 1];
-  lastNode.children.push({
-    type: "Interpolation",
-    content: {
-      type: "Expression",
-      content,
-    },
-  });
-  context.advance(interpolation.length);
+  // 吃插值
+  // {{foo}}{{bar}}<div/>
+  while (!context.source.startsWith("<")) {
+    context.advanceSpace();
+    // TODO: 单双引号，属性判断
+    const [interpolation, content] = /^{{([^<]*)}}/i.exec(context.source);
+    const lastNode = stack[stack.length - 1];
+    lastNode.children.push({
+      type: "Interpolation",
+      content: {
+        type: "Expression",
+        content,
+      },
+    });
+    context.advance(interpolation.length);
+  }
 }
