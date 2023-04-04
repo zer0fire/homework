@@ -181,12 +181,14 @@ function parseText(context, stack) {
   }
   const content = context.source.slice(0, endIndex);
   const lastNode = stack[stack.length - 1];
-  lastNode.children.push({
+  const textNode = {
     type: "Text",
     content,
-  });
+  };
+  lastNode.children.push(textNode);
 
   context.advance(content.length);
+  return textNode;
 }
 
 // 作业2 解析属性
@@ -216,18 +218,22 @@ function parseAttribute(context, node) {
 function parseInterpolation(context, stack) {
   // 吃插值
   // {{foo}}{{bar}}<div/>
+  const interpolationArray = [];
   while (!context.source.startsWith("<")) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
     const [interpolation, content] = /^{{([^<]*?)}}/i.exec(context.source);
     const lastNode = stack[stack.length - 1];
-    lastNode.children.push({
+    const interpolationNode = {
       type: "Interpolation",
       content: {
         type: "Expression",
         content,
       },
-    });
+    };
+    lastNode.children.push(interpolationNode);
+    interpolationArray.push(interpolationNode);
     context.advance(interpolation.length);
   }
+  return interpolationArray;
 }
