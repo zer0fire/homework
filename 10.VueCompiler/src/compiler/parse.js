@@ -170,12 +170,22 @@ function parseTag(context, type = "start") {
 
 // 作业1 文本
 function parseText(context, stack) {
-  const [content] = /^([^<]*)/i.exec(context.source);
+  // 插值和 < 是终点
+  const endTokens = ["<", "{{"];
+  let endIndex = context.source.length;
+  for (let i = 0; i < endTokens.length; i++) {
+    const index = context.source.indexOf(endTokens[i], 1);
+    if (index !== -1 && endIndex > index) {
+      endIndex = index;
+    }
+  }
+  const content = context.source.slice(0, endIndex);
   const lastNode = stack[stack.length - 1];
   lastNode.children.push({
     type: "Text",
     content,
   });
+
   context.advance(content.length);
 }
 
@@ -186,7 +196,7 @@ function parseAttribute(context, node) {
   while (!context.source.startsWith("/>") && !context.source.startsWith(">")) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
-    const [origin, name, value] = /^([^=]*)="([^=]*)"/i.exec(context.source);
+    const [origin, name, value] = /^([^=]*)="([^=]*?)"/i.exec(context.source);
     const attribute = {
       type: "Attribute",
       name,
@@ -209,7 +219,7 @@ function parseInterpolation(context, stack) {
   while (!context.source.startsWith("<")) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
-    const [interpolation, content] = /^{{([^<]*)}}/i.exec(context.source);
+    const [interpolation, content] = /^{{([^<]*?)}}/i.exec(context.source);
     const lastNode = stack[stack.length - 1];
     lastNode.children.push({
       type: "Interpolation",
