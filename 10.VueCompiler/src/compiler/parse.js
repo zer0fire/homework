@@ -53,6 +53,7 @@ export function parse(template) {
     },
     advanceSpace() {
       // 吃空格
+      this.source = this.source.trim();
     },
   };
 
@@ -65,44 +66,6 @@ export function parse(template) {
   //     },
   //   ];
   return parseChildren(context, []);
-}
-
-function combineTag(nodes, retNodes = []) {
-  // [
-  //   { type: "tagStart", name: "div" },
-  //   { type: "tagEnd", name: "div" },
-  // ];
-  let i = 0;
-  let cacheNode = [];
-  while (i < nodes.length) {
-    const tagNode = nodes[i];
-    const lastEleNode = cacheNode[cacheNode.length - 1];
-    if (tagNode && tagNode.type === "tagStart") {
-      const elementNode = {
-        tag: "div",
-        type: "Element",
-        children: [],
-        isUnary: false,
-      };
-      // 子状态机 - parseElement -> 内部循环，循环转递归
-      cacheNode.push(elementNode);
-      if (lastEleNode) {
-        // 非顶层
-        lastEleNode.children.push(elementNode);
-      } else {
-        // 顶层
-        retNodes.push(elementNode);
-      }
-    } else if (tagNode && tagNode.type === "tagEnd") {
-      if (tagNode.name === lastEleNode.tag || lastEleNode.isUnary) {
-        cacheNode.pop();
-      } else {
-        throw new Error("unmatched tag");
-      }
-    }
-    i++;
-  }
-  return retNodes;
 }
 
 /**
@@ -129,11 +92,12 @@ function parseChildren(context, stack) {
       }
     } else if (context.source.startsWith("{{")) {
       // 插值
-    }
-    if (!node) {
+      parseInterpolation(context, stack);
+    } else if (!node) {
       // 文本节点
       parseText(context, stack);
     }
+    // console.log(node);
     nodes.push(node);
   }
   return nodes;
@@ -164,7 +128,7 @@ function parseElement(context, stack) {
     stack.push(node);
     // TODO:
     // 处理 children
-    child = parseChildren(context, stack);
+    const child = parseChildren(context, stack);
 
     // 结束
     parseTag(context, "end");
@@ -181,6 +145,7 @@ function parseTag(context, type = "start") {
   const node = {
     tag: "",
     type: "Element",
+    props: [],
     isUnary: false,
     children: [],
   };
@@ -191,7 +156,7 @@ function parseTag(context, type = "start") {
   // context.source 操作，消费 <div>
   context.advance(consumeTagLen);
 
-  parseAttribute();
+  parseAttribute(context, node);
 
   if (context.source.startsWith("/>")) {
     node.isUnary = true;
@@ -204,12 +169,49 @@ function parseTag(context, type = "start") {
 }
 
 // 作业1 文本
-function parseText(context, stack) {}
+function parseText(context, stack) {
+  const [content] = /^([^<]*)/i.exec(context.source);
+  const lastNode = stack[stack.length - 1];
+  lastNode.children.push({
+    type: "Text",
+    content,
+  });
+  context.advance(content.length);
+}
 
 // 作业2 解析属性
-function parseAttribute(context) {
+function parseAttribute(context, node) {
   // 吃属性
-  // 单双引号，属性判断
+  // id="foo" v-show="isShow"><div/>
+  while (!context.source.startsWith("/>") && !context.source.startsWith(">")) {
+    context.advanceSpace();
+    // TODO: 单双引号，属性判断
+    const [origin, name, value] = /^([^=]*)="([^=]*)"/i.exec(context.source);
+    const attribute = {
+      type: "Attribute",
+      name,
+      value,
+    };
+    if (node.props) {
+      node.props.push(attribute);
+    } else {
+      node.props = [attribute];
+    }
+    context.advance(origin.length);
+  }
+  return context;
 }
 
 // 作业3 解析 {{}}
+function parseInterpolation(context, stack) {
+  const [interpolation, content] = /^{{([^<]*)}}/i.exec(context.source);
+  const lastNode = stack[stack.length - 1];
+  lastNode.children.push({
+    type: "Interpolation",
+    content: {
+      type: "Expression",
+      content,
+    },
+  });
+  context.advance(interpolation.length);
+}

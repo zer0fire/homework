@@ -7,6 +7,7 @@ describe("compiler", () => {
     expect(ast[0]).toEqual({
       tag: "div",
       type: "Element",
+      props: [],
       children: [],
       isUnary: false,
     });
@@ -17,6 +18,7 @@ describe("compiler", () => {
     expect(ast[0]).toEqual({
       tag: "div",
       type: "Element",
+      props: [],
       children: [],
       isUnary: false,
     });
@@ -27,65 +29,72 @@ describe("compiler", () => {
     expect(ast[0]).toEqual({
       tag: "div",
       type: "Element",
+      props: [],
       children: [],
       isUnary: false,
     });
   });
-  // it("parse props and directive", () => {
-  //   const template = '<div id="foo" v-show="isShow"></div>';
-  //   const ast = parse(template);
-  //   expect(ast[0]).toEqual({
-  //     tag: "div",
-  //     type: "Element",
-  //     props: [
-  //       {
-  //         type: "Attribute",
-  //         name: "id",
-  //         value: "foo",
-  //       },
-  //       {
-  //         type: "Attribute",
-  //         name: "v-show",
-  //         value: "isShow",
-  //       },
-  //     ],
-  //     children: [],
-  //     isUnary: false,
-  //   });
-  // });
-  // it("parse plain text", () => {
-  //   const template = "<div>some text</div>";
-  //   const ast = parse(template);
-  //   expect(ast[0]).toEqual({
-  //     tag: "div",
-  //     type: "Element",
-  //     props: [],
-  //     children: [
-  //       {
-  //         type: "Text",
-  //         content: "some text",
-  //       },
-  //     ],
-  //     isUnary: false,
-  //   });
-  // });
-  // it("parse interpolation", () => {
-  //   const template = "<div>{{foo}}</div>";
-  //   const ast = parse(template);
-  //   expect(ast[0]).toEqual({
-  //     tag: "div",
-  //     type: "Element",
-  //     props: [],
-  //     children: [
-  //       {
-  //         type: "Interpolation",
-  //         content: {
-  //           type: "Expression",
-  //           content: "foo",
-  //         },
-  //       },
-  //     ],
-  //     isUnary: false,
-  //   });
-  // });
+  it("parse props and directive", () => {
+    const template = '<div id="foo" v-show="isShow"></div>';
+    const ast = parse(template);
+    expect(ast[0]).toEqual({
+      tag: "div",
+      type: "Element",
+      props: [
+        {
+          type: "Attribute",
+          name: "id",
+          value: "foo",
+        },
+        {
+          type: "Attribute",
+          name: "v-show",
+          value: "isShow",
+        },
+      ],
+      children: [],
+      isUnary: false,
+    });
+  });
+  it("parse plain text", () => {
+    const template = '<div id="some">some text</div>';
+    const ast = parse(template);
+    expect(ast[0]).toEqual({
+      tag: "div",
+      type: "Element",
+      props: [
+        {
+          type: "Attribute",
+          name: "id",
+          value: "some",
+        },
+      ],
+      children: [
+        {
+          type: "Text",
+          content: "some text",
+        },
+      ],
+      isUnary: false,
+    });
+  });
+  it("parse interpolation", () => {
+    const template = "<div>{{foo}}</div>";
+    const ast = parse(template);
+    expect(ast[0]).toEqual({
+      tag: "div",
+      type: "Element",
+      props: [],
+      children: [
+        {
+          type: "Interpolation",
+          content: {
+            type: "Expression",
+            content: "foo",
+          },
+        },
+      ],
+      isUnary: false,
+    });
+  });
 });
