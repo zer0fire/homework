@@ -16,6 +16,10 @@ function isLowercase(char) {
   return charCode >= "a".charCodeAt(0) && charCode <= "z".charCodeAt(0);
 }
 
+function isArray(arg) {
+  return Array.isArray(arg);
+}
+
 /**
  *
  * @param {string} char
@@ -32,8 +36,8 @@ function isUppercase(char) {
  * @returns
  */
 function isAlphabet(char) {
-  return char.match(/[a-zA-Z]/i);
-  // return isLowercase(char) || isUppercase(char);
+  // return char.match(/[a-zA-Z]/i);
+  return isLowercase(char) || isUppercase(char);
   // return char !== "<" && char !== ">";
 }
 
@@ -73,7 +77,7 @@ export function parse(template) {
  * @param {{ source: string }} context
  * @param {*} stack 判定节点内是否清空
  */
-function parseChildren(context, stack) {
+function parseChildren(context, stack, ancestors) {
   // 存储 ast 结果
   const nodes = [];
 
@@ -88,20 +92,27 @@ function parseChildren(context, stack) {
       // 状态 2 到 状态 3
       if (isAlphabet(context.source[1])) {
         // 处理当前的节点树 递归
-        node = parseElement(context, stack);
+        node = parseElement(context, stack, ancestors);
       }
     } else if (context.source.startsWith("{{")) {
       // 插值
-      parseInterpolation(context, stack);
+      node = parseInterpolation(context, stack);
     } else if (!node) {
       // 文本节点
-      parseText(context, stack);
+      node = parseText(context, stack);
     }
-    // console.log(node);
-    nodes.push(node);
+    if (isArray(node)) {
+      for (let i = 0; i < node.length; i++) {
+        pushNode(nodes, node[i]);
+      }
+    } else {
+      pushNode(nodes, node);
+    }
   }
+  // console.log(nodes);
   return nodes;
 }
+
 function isEnd(context, stack) {
   if (!context.source) {
     // source 没了，结束
@@ -126,9 +137,10 @@ function parseElement(context, stack) {
   if (!node.isUnary) {
     // children、
     stack.push(node);
-    // TODO:
-    // 处理 children
-    const child = parseChildren(context, stack);
+    // 获取 children
+    const children = parseChildren(context, stack);
+    // 放置 children
+    node.children = children;
 
     // 结束
     parseTag(context, "end");
@@ -143,8 +155,8 @@ function parseTag(context, type = "start") {
   const endTagReg = /^<\/([a-z][^\t\r\n\f />]*)/i;
   const pattern = type === "start" ? startTagReg : endTagReg;
   const node = {
-    tag: "",
     type: "Element",
+    tag: "",
     props: [],
     isUnary: false,
     children: [],
@@ -156,7 +168,7 @@ function parseTag(context, type = "start") {
   // context.source 操作，消费 <div>
   context.advance(consumeTagLen);
 
-  parseAttribute(context, node);
+  node.props = parseAttributes(context, node);
 
   if (context.source.startsWith("/>")) {
     node.isUnary = true;
@@ -180,21 +192,20 @@ function parseText(context, stack) {
     }
   }
   const content = context.source.slice(0, endIndex);
-  const lastNode = stack[stack.length - 1];
   const textNode = {
     type: "Text",
     content,
   };
-  lastNode.children.push(textNode);
 
   context.advance(content.length);
   return textNode;
 }
 
 // 作业2 解析属性
-function parseAttribute(context, node) {
+function parseAttributes(context, node) {
   // 吃属性
   // id="foo" v-show="isShow"><div/>
+  const props = [];
   while (!context.source.startsWith("/>") && !context.source.startsWith(">")) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
@@ -204,14 +215,10 @@ function parseAttribute(context, node) {
       name,
       value,
     };
-    if (node.props) {
-      node.props.push(attribute);
-    } else {
-      node.props = [attribute];
-    }
+    props.push(attribute);
     context.advance(origin.length);
   }
-  return context;
+  return props;
 }
 
 // 作业3 解析 {{}}
@@ -223,7 +230,6 @@ function parseInterpolation(context, stack) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
     const [interpolation, content] = /^{{([^<]*?)}}/i.exec(context.source);
-    const lastNode = stack[stack.length - 1];
     const interpolationNode = {
       type: "Interpolation",
       content: {
@@ -231,9 +237,24 @@ function parseInterpolation(context, stack) {
         content,
       },
     };
-    lastNode.children.push(interpolationNode);
     interpolationArray.push(interpolationNode);
     context.advance(interpolation.length);
   }
   return interpolationArray;
+}
+
+/**
+ *
+ * @param {Array} nodes
+ * @param {*} node
+ */
+function pushNode(nodes, node) {
+  if (node.type === "Text") {
+    const lastNode = nodes[nodes.length - 1];
+    if (lastNode && lastNode.type === "Text") {
+      lastNode.content += node.content;
+      return;
+    }
+  }
+  nodes.push(node);
 }
