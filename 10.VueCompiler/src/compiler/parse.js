@@ -226,7 +226,7 @@ function parseInterpolation(context, stack) {
   // 吃插值
   // {{foo}}{{bar}}<div/>
   const interpolationArray = [];
-  while (!context.source.startsWith("<")) {
+  while (context.source.startsWith("{{")) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
     const [interpolation, content] = /^{{([^<]*?)}}/i.exec(context.source);

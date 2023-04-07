@@ -113,4 +113,92 @@ describe("compiler", () => {
       isUnary: false,
     });
   });
+  it("parse multi interpolation", () => {
+    const template = "<div>{{foo}}{{bar}}</div>";
+    const ast = parse(template);
+    expect(ast[0]).toEqual({
+      tag: "div",
+      type: "Element",
+      props: [],
+      children: [
+        {
+          type: "Interpolation",
+          content: {
+            type: "Expression",
+            content: "foo",
+          },
+        },
+        {
+          type: "Interpolation",
+          content: {
+            type: "Expression",
+            content: "bar",
+          },
+        },
+      ],
+      isUnary: false,
+    });
+  });
+  it("parse text and interpolation", () => {
+    const template = '<div id="some">some text{{foo}}</div>';
+    const ast = parse(template);
+    expect(ast[0]).toEqual({
+      tag: "div",
+      type: "Element",
+      props: [
+        {
+          type: "Attribute",
+          name: "id",
+          value: "some",
+        },
+      ],
+      children: [
+        {
+          type: "Text",
+          content: "some text",
+        },
+        {
+          type: "Interpolation",
+          content: {
+            type: "Expression",
+            content: "foo",
+          },
+        },
+      ],
+      isUnary: false,
+    });
+  });
+  it("parse text and interpolation and after interpolation text", () => {
+    const template = '<div id="some">some text{{foo}}some text2</div>';
+    const ast = parse(template);
+    expect(ast[0]).toEqual({
+      tag: "div",
+      type: "Element",
+      props: [
+        {
+          type: "Attribute",
+          name: "id",
+          value: "some",
+        },
+      ],
+      children: [
+        {
+          type: "Text",
+          content: "some text",
+        },
+        {
+          type: "Interpolation",
+          content: {
+            type: "Expression",
+            content: "foo",
+          },
+        },
+        {
+          type: "Text",
+          content: "some text2",
+        },
+      ],
+      isUnary: false,
+    });
+  });
 });
