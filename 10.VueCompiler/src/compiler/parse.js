@@ -58,6 +58,8 @@ export function parse(template) {
     advanceSpace() {
       // 吃空格
       this.source = this.source.trim();
+      // const space = /^[ \n\t\r]*/.exec(this.source);
+      // this.source = this.source.slice(space.length);
     },
   };
 
@@ -77,9 +79,10 @@ export function parse(template) {
  * @param {{ source: string }} context
  * @param {*} stack 判定节点内是否清空
  */
-function parseChildren(context, stack, ancestors) {
+function parseChildren(context, stack) {
   // 存储 ast 结果
   const nodes = [];
+  // 闭包，返回当前层级下的 children
 
   // 结束条件
   while (!isEnd(context, stack)) {
@@ -92,12 +95,15 @@ function parseChildren(context, stack, ancestors) {
       // 状态 2 到 状态 3
       if (isAlphabet(context.source[1])) {
         // 处理当前的节点树 递归
-        node = parseElement(context, stack, ancestors);
+        node = parseElement(context, stack);
+        // <span></span>
       }
     } else if (context.source.startsWith("{{")) {
       // 插值
       node = parseInterpolation(context, stack);
-    } else if (!node) {
+      // <div>{{foo}}</div>
+    }
+    if (!node) {
       // 文本节点
       node = parseText(context, stack);
     }
@@ -128,18 +134,22 @@ function isEnd(context, stack) {
     return context.source.startsWith(`</${node.tag}>`);
   }
 }
-
+// parseChildren -> parseElement -> parseChildren
+// </div>
 function parseElement(context, stack) {
+  // <div></div>
   // context.source 一部分转换成 { tag: 'div' }
   // 开始、 <div>
   const node = parseTag(context);
+  // { tag: div, isUnary: false, }
+  // 自闭合不用处理 children 和是否结束
   // props
   if (!node.isUnary) {
-    // children、
     stack.push(node);
+    // children、
     // 获取 children
     const children = parseChildren(context, stack);
-    // 放置 children
+    // 放置 children，直接把返回的 Children 挂载到节点上 p -> div
     node.children = children;
 
     // 结束
@@ -162,12 +172,13 @@ function parseTag(context, type = "start") {
     children: [],
   };
   // ['<div>', 'div', index: 0, input: '<div>', groups: undefined]
+  // <div><p></p></div> -> <div>
   const consumeTag = pattern.exec(context.source);
   const consumeTagLen = consumeTag[0].length;
   node.tag = consumeTag[1];
   // context.source 操作，消费 <div>
   context.advance(consumeTagLen);
-
+  // <div id="foo"><p></p></div>
   node.props = parseAttributes(context, node);
 
   if (context.source.startsWith("/>")) {
@@ -183,9 +194,11 @@ function parseTag(context, type = "start") {
 // 作业1 文本
 function parseText(context, stack) {
   // 插值和 < 是终点
+  // dasdawehiuq 12e312howe{{foo}}</div>
   const endTokens = ["<", "{{"];
   let endIndex = context.source.length;
   for (let i = 0; i < endTokens.length; i++) {
+    // <</div>，防止字符里混着 < 符号
     const index = context.source.indexOf(endTokens[i], 1);
     if (index !== -1 && endIndex > index) {
       endIndex = index;
@@ -201,26 +214,6 @@ function parseText(context, stack) {
   return textNode;
 }
 
-// 作业2 解析属性
-function parseAttributes(context, node) {
-  // 吃属性
-  // id="foo" v-show="isShow"><div/>
-  const props = [];
-  while (!context.source.startsWith("/>") && !context.source.startsWith(">")) {
-    context.advanceSpace();
-    // TODO: 单双引号，属性判断
-    const [origin, name, value] = /^([^=]*)="([^=]*?)"/i.exec(context.source);
-    const attribute = {
-      type: "Attribute",
-      name,
-      value,
-    };
-    props.push(attribute);
-    context.advance(origin.length);
-  }
-  return props;
-}
-
 // 作业3 解析 {{}}
 function parseInterpolation(context, stack) {
   // 吃插值
@@ -229,18 +222,58 @@ function parseInterpolation(context, stack) {
   while (context.source.startsWith("{{")) {
     context.advanceSpace();
     // TODO: 单双引号，属性判断
-    const [interpolation, content] = /^{{([^<]*?)}}/i.exec(context.source);
+    const [interpolation, value] = /^{{(.*?)}}/i.exec(context.source);
     const interpolationNode = {
       type: "Interpolation",
       content: {
         type: "Expression",
-        content,
+        content: value,
       },
     };
     interpolationArray.push(interpolationNode);
     context.advance(interpolation.length);
   }
   return interpolationArray;
+}
+
+// 作业2 解析属性
+function parseAttributes(context, node) {
+  // 吃属性
+  // id="foo" v-show="isShow" disable lazy checked><div/>
+  //
+  // context.source
+  // id="foo" class="bar"><p></p></div>
+  const props = [];
+  while (!context.source.startsWith("/>") && !context.source.startsWith(">")) {
+    context.advanceSpace();
+    // TODO: 没有等号的属性，设置为 true
+    const res = /^([^=]*)=("([^=]*?)"|'([^=]*?)')/i.exec(context.source);
+    // id="foo"
+    if (res) {
+      // id='foo', id, _, _, foo
+      const [origin, name, _, doubleVal, singleVal] = res;
+      const attribute = {
+        type: "Attribute",
+        name,
+        value: doubleVal || singleVal,
+      };
+      props.push(attribute);
+      context.advance(origin.length);
+    } else {
+      // disable><p></p></div>
+      const [name] = /^[a-zA-Z0-9]*/i.exec(context.source);
+      const attribute = {
+        type: "Attribute",
+        name,
+        value: true,
+      };
+      props.push(attribute);
+      context.advance(name.length);
+    }
+    // class="bar"><p></p></div>
+    context.advanceSpace();
+  }
+  return props;
 }
 
 /**

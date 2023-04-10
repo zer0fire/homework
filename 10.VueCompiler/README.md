@@ -1,23 +1,15 @@
 # mini-vue
 
 - 隐藏细节
-
 - 数据驱动
-
 - 数据响应式
-
 - 模板语法和编译器
-
 - 虚拟 DOM 到 真实 DOM
-
 - 组件化
-
 - Diff 算法
-
 - 数据性
 
   - react：setState -》useState 主动
-
   - vue：响应式 被动
 
     - vue2 Object.defineProperty 数组覆盖原型方法 增删属性额外 API，Vue.set / delete
@@ -38,3 +30,15 @@
 1. 为了不全量更新，只增量更新
 2. 为了 diff 算法
 3. DOM 太重，数据太多
+
+# 问问村长
+
+最近的行业见闻
+
+当前的工作
+
+https://poe.com/
+
+jest `<filename>` --testNamePattern="`<testName>`"
+
+网易为例子，前端岗位 20 个左右，广州、杭州大部分，北京 1

@@ -1,4 +1,4 @@
-import { parse } from "../src/compiler/parse";
+import { parse, generate } from "../src/compiler";
 
 describe("compiler", () => {
   it("parse element", () => {
@@ -51,7 +51,7 @@ describe("compiler", () => {
     });
   });
   it("parse props and directive", () => {
-    const template = '<div id="foo" v-show="isShow"></div>';
+    const template = '<div id="foo" v-show="isShow" disable></div>';
     const ast = parse(template);
     expect(ast[0]).toEqual({
       tag: "div",
@@ -66,6 +66,11 @@ describe("compiler", () => {
           type: "Attribute",
           name: "v-show",
           value: "isShow",
+        },
+        {
+          type: "Attribute",
+          name: "disable",
+          value: true,
         },
       ],
       children: [],
@@ -200,5 +205,61 @@ describe("compiler", () => {
       ],
       isUnary: false,
     });
+  });
+
+  it("generate element with text", () => {
+    const ast = [
+      {
+        type: "Element",
+        tag: "div",
+        props: [],
+        isUnary: false,
+        children: [{ type: "Text", content: "foo" }],
+      },
+    ];
+    const code = generate(ast);
+    expect(code).toMatch(`return this._c('div',null,'foo')`);
+  });
+  it("generate element with expression", () => {
+    const ast = [
+      {
+        type: "Element",
+        tag: "div",
+        props: [],
+        isUnary: false,
+        children: [
+          {
+            type: "Interpolation",
+            content: { type: "Expression", content: "foo" },
+          },
+        ],
+      },
+    ];
+    const code = generate(ast);
+    expect(code).toMatch(`return this._c('div',null,this.foo)`);
+  });
+  it("generate element with muti children", () => {
+    const ast = [
+      {
+        type: "Element",
+        tag: "div",
+        props: [],
+        isUnary: false,
+        children: [
+          { type: "Text", content: "foo" },
+          {
+            type: "Element",
+            tag: "span",
+            props: [],
+            isUnary: false,
+            children: [{ type: "Text", content: "bar" }],
+          },
+        ],
+      },
+    ];
+    const code = generate(ast);
+    expect(code).toMatch(
+      `return this._c('div',null,[this._v('foo'),this._c('span',null,'bar')])`
+    );
   });
 });

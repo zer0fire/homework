@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll",
-    "cover": "jest --coverage"
+    "cover": "jest --coverage && http-server -o ./coverage/lcov-report"
   },
   "keywords": [],
   "author": "",
