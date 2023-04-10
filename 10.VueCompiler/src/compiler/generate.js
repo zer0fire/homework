@@ -43,11 +43,11 @@ function generateNode(node) {
 function generateElement(node) {
   let props = "null";
   if (node.props && node.props.length > 0) {
-    const propsObj = {};
+    let propsStr = "";
     for (const prop of node.props) {
-      props[prop.name] = props.value;
+      propsStr += `'${prop.name}':'${prop.value}',`;
     }
-    props = JSON.stringify(propsObj);
+    props = `{${propsStr.slice(0, propsStr.length - 1)}}`;
   }
   let children = null;
   if (node.children.length <= 1) {

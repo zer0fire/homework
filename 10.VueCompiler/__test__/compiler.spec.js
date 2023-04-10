@@ -220,6 +220,25 @@ describe("compiler", () => {
     const code = generate(ast);
     expect(code).toMatch(`return this._c('div',null,'foo')`);
   });
+  it("generate element has id prop", () => {
+    const ast = [
+      {
+        type: "Element",
+        tag: "div",
+        props: [
+          {
+            type: "Attribute",
+            name: "id",
+            value: "some",
+          },
+        ],
+        isUnary: false,
+        children: [{ type: "Text", content: "foo" }],
+      },
+    ];
+    const code = generate(ast);
+    expect(code).toMatch(`return this._c('div',{'id':'some'},'foo')`);
+  });
   it("generate element with expression", () => {
     const ast = [
       {
