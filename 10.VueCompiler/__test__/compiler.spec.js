@@ -1,4 +1,5 @@
 import { parse, generate } from "../src/compiler";
+// import { generate } from "../src/compiler/generate2";
 
 describe("compiler", () => {
   it("parse element", () => {

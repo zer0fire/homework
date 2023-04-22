@@ -1,33 +1,14 @@
 export function generate(ast) {
+  // TODO:
   // 参数三是单个文本节点，就用单个字符串表示
   // 参数三是单个的插值，就用单个 this.foo 表示
   // 参数三是混合的，文本用 this._v, 节点继续用 this._c
-
-  // ret = `this._c('${node[0].tag}',null,'${children}');`;
-  /**
-    [
-      {
-        type: "Element",
-        tag: "div",
-        props: [],
-        isUnary: false,
-        children: [
-          {
-            type: "Interpolation",
-            content: { type: "Expression", content: "foo" },
-          },
-        ],
-      },
-    ];
- */
-  // return this._c('div',null,this.foo)
+  // 参数三是元素的，最后也要用 [] 包起来
   const ret = generateNode(ast[0]);
   return `return ${ret}`;
 }
 
 function generateNode(node) {
-  let children = null;
-
   switch (node.type) {
     case "Element":
       return generateElement(node);
@@ -40,41 +21,55 @@ function generateNode(node) {
   }
   return "";
 }
-function generateElement(node) {
-  let props = "null";
-  if (node.props && node.props.length > 0) {
-    let propsStr = "";
-    for (const prop of node.props) {
-      propsStr += `'${prop.name}':'${prop.value}',`;
-    }
-    props = `{${propsStr.slice(0, propsStr.length - 1)}}`;
-  }
-  let children = null;
-  if (node.children.length <= 1) {
-    if (node.children[0].type === "Interpolation") {
-      // 插值
-      children = `this.${node.children[0].content.content}`;
-    } else if (node.children[0].type === "Text") {
-      // 字符串
-      children = `'${node.children[0].content}'`;
-    }
-  }
-  if (!children) {
-    const list = [];
-    for (let child of node.children) {
-      const str = `${generateNode(child)}`;
-      list.push(str);
-    }
-    children = `[${list.toString()}]`;
-  }
 
-  return `this._c('${node.tag}',${props},${children})`;
+function generateElement(node) {
+  return `this._c('${node.tag}',${generateProps(node.props)},${generateChildren(
+    node.children
+  )})`;
 }
+
 function generateInterpolation(node) {
   return `this.${node.content.content}`;
 }
+
 function generateText(node) {
   return `this._v('${node.content}')`;
 }
-function generateChildren() {}
-function generateProp() {}
+
+function generateChildren(children) {
+  let childStr = "null";
+  if (!children || children.length <= 0) {
+    return childStr;
+  }
+  if (children.length === 1) {
+    if (children[0].type === "Interpolation") {
+      // 插值
+      return generateInterpolation(children[0]);
+    } else if (children[0].type === "Text") {
+      // 字符串
+      return `'${children[0].content}'`;
+    } else {
+      return `[${generateElement(children[0])}]`;
+    }
+  } else {
+    const list = [];
+    for (let child of children) {
+      const str = `${generateNode(child)}`;
+      list.push(str);
+    }
+    return `[${list.toString()}]`;
+  }
+}
+
+function generateProps(props) {
+  let propsStr = "";
+  if (props && props.length > 0) {
+    propsStr = `{${props
+      .map((prop) => `'${prop.name}':'${prop.value}'`)
+      .join(",")}}`;
+  }
+  if (!propsStr) {
+    propsStr = "null";
+  }
+  return propsStr;
+}
