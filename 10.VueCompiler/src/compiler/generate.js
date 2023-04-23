@@ -23,17 +23,21 @@ function generateNode(node) {
 }
 
 function generateElement(node) {
-  return `this._c('${node.tag}',${generateProps(node.props)},${generateChildren(
-    node.children
-  )})`;
+  if (node.children.length > 0) {
+    return `this._c('${node.tag}',${generateProps(
+      node.props
+    )},${generateChildren(node.children)})`;
+  } else {
+    return `this._c('${node.tag}',${generateProps(node.props)})`;
+  }
 }
 
 function generateInterpolation(node) {
   return `this.${node.content.content}`;
 }
 
-function generateText(node) {
-  return `this._v('${node.content}')`;
+function generateText(node, isWrap = true) {
+  return isWrap ? `this._v('${node.content}')` : `'${node.content}'`;
 }
 
 function generateChildren(children) {
@@ -47,7 +51,7 @@ function generateChildren(children) {
       return generateInterpolation(children[0]);
     } else if (children[0].type === "Text") {
       // 字符串
-      return `'${children[0].content}'`;
+      return generateText(children[0], false);
     } else {
       return `[${generateElement(children[0])}]`;
     }
@@ -57,7 +61,7 @@ function generateChildren(children) {
       const str = `${generateNode(child)}`;
       list.push(str);
     }
-    return `[${list.toString()}]`;
+    return `[${list.join(",")}]`;
   }
 }
 

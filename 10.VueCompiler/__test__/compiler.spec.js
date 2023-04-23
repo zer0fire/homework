@@ -282,4 +282,17 @@ describe("compiler", () => {
       `return this._c('div',null,[this._v('foo'),this._c('span',null,'bar')])`
     );
   });
+  it("generate element with empty children", () => {
+    const ast = [
+      {
+        type: "Element",
+        tag: "div",
+        props: [],
+        isUnary: false,
+        children: [],
+      },
+    ];
+    const code = generate(ast);
+    expect(code).toMatch(`return this._c('div',null)`);
+  });
 });
