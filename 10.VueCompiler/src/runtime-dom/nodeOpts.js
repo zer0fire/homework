@@ -3,7 +3,7 @@ export const nodeOpts = {
     return document.createElement(tag);
   },
   setText(element, text) {
-    element.textContent = text;
+    return (element.textContent = text);
   },
   appendChild: function (parent, child) {
     return parent.appendChild(child);
@@ -13,20 +13,30 @@ export const nodeOpts = {
   },
   patchProp(element, key, oldValue, newValue) {
     if (key.startsWith("on")) {
+      // 事件
       const callback = newValue;
       const event = key.slice(2).toLowerCase();
+      const invokers =
+        element._vnodeEventInvoker || (element._vnodeEventInvoker = {});
+      let invoker = invokers[event];
+      if (newValue) {
+        if (invoker) {
+          invoker.value = callback;
+        } else {
+          invoker = element._vnodeEventInvoker[event] = (e) => {
+            invoker.value(e);
+          };
+          invoker.value = callback;
+          element.addEventListener(event, invoker);
+        }
+      } else if (!newValue && invoker) {
+        element.removeEventListener(event, invoker);
+      }
       // element.removeEventListener 解绑老事件
       // 如果事件没变怎么办
-      element.addEventListener(event, () => {
-        callback();
-      });
+      element._vnodeEventInvoker[event] = invoker;
     } else {
       element.setAttribute(key, newValue);
-      // if (!oldValue) {
-      //   // 新增
-      // } else {
-      //   // 修改
-      // }
     }
   },
 };
