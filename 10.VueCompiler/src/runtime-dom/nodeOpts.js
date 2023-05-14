@@ -1,3 +1,7 @@
+function shouldSetAsProps(el, key, value) {
+  if (key === "form" && element.tagName === "INPUT") return false;
+  return key in el;
+}
 export const nodeOpts = {
   createElement: function (tag) {
     return document.createElement(tag);

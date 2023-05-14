@@ -23,7 +23,7 @@ export function compile(template) {
 
   return {
     render: function () {
-      return new Function(func).call(context);
+      return new Function(func).call(this);
     },
   };
 }
