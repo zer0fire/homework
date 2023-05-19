@@ -1,0 +1,23 @@
+{
+  "name": "go",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sgf.js",
+  "type": "module",
+  "scripts": {
+    "dev": "ts-node --esm parseFile.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "doken": "^1.0.2",
+    "iconv-lite": "^0.6.3",
+    "jschardet": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.1",
+    "typescript": "^5.0.4"
+  }
+}

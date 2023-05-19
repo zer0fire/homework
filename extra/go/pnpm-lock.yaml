@@ -1,0 +1,49 @@
+lockfileVersion: 5.3
+
+specifiers:
+  '@types/node': ^20.2.1
+  doken: ^1.0.2
+  iconv-lite: ^0.6.3
+  jschardet: ^3.0.0
+  typescript: ^5.0.4
+
+dependencies:
+  doken: 1.0.2
+  iconv-lite: 0.6.3
+  jschardet: 3.0.0
+
+devDependencies:
+  '@types/node': 20.2.1
+  typescript: 5.0.4
+
+packages:
+
+  /@types/node/20.2.1:
+    resolution: {integrity: sha512-DqJociPbZP1lbZ5SQPk4oag6W7AyaGMO6gSfRwq3PWl4PXTwJpRQJhDq4W0kzrg3w6tJ1SwlvGZ5uKFHY13LIg==}
+    dev: true
+
+  /doken/1.0.2:
+    resolution: {integrity: sha512-JSVsMxaB5yikb6wBDQTGIcyNyUytrYQE7WGyGAC0EoFunUTV7Wag4p5JC2bXKuTfD7t847dy7TWcwyETUbYAiw==}
+    dev: false
+
+  /iconv-lite/0.6.3:
+    resolution: {integrity: sha1-pS+AvzjaGVLrXGgXkHGYcaGnJQE=}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      safer-buffer: 2.1.2
+    dev: false
+
+  /jschardet/3.0.0:
+    resolution: {integrity: sha1-iY0jMuReurvba/L+7On+6pqZ6II=}
+    engines: {node: '>=0.1.90'}
+    dev: false
+
+  /safer-buffer/2.1.2:
+    resolution: {integrity: sha1-RPoWGwGHuVSd2Eu5GAL5vYOFzWo=}
+    dev: false
+
+  /typescript/5.0.4:
+    resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==}
+    engines: {node: '>=12.20'}
+    hasBin: true
+    dev: true
