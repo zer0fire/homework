@@ -136,6 +136,146 @@ describe("renderer", () => {
     renderer.render(newVnode, container);
     expect(container.innerHTML).toBe("<p>hello</p>");
   });
+  test("update text", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: Text,
+      children: "hello",
+    };
+    const newVnode = {
+      tag: Text,
+      children: "olleh",
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("hello");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe("olleh");
+  });
+  test("update props", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      props: { id: "box", class: "box", title: "box" },
+    };
+    const newVnode = {
+      tag: "div",
+      props: { id: "box", class: "box active" },
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe(
+      '<div id="box" class="box" title="box"></div>'
+    );
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe('<div id="box" class="box active"></div>');
+  });
+  test("update element", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      children: "hello",
+    };
+    const newVnode = {
+      tag: "div",
+      children: "olleh",
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("<div>hello</div>");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe("<div>olleh</div>");
+  });
+  test("update element array chidren to text", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "span",
+          children: "child",
+        },
+      ],
+    };
+    const newVnode = {
+      tag: "div",
+      children: "child",
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("<div><span>child</span></div>");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe("<div>child</div>");
+  });
+  test("update element text chidren to array", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      children: "child",
+    };
+    const newVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "span",
+          children: "child",
+        },
+      ],
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("<div>child</div>");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe("<div><span>child</span></div>");
+  });
+  test("diff：node move", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "p",
+          children: "p1",
+          key: "1",
+        },
+        {
+          tag: "p",
+          children: "p2",
+          key: "2",
+        },
+        {
+          tag: "p",
+          children: "p3",
+          key: "3",
+        },
+      ],
+    };
+    const newVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "p",
+          children: "p3",
+          key: "3",
+        },
+        {
+          tag: "p",
+          children: "p1",
+          key: "1",
+        },
+        {
+          tag: "p",
+          children: "p2",
+          key: "2",
+        },
+      ],
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("<div><p>p1</p><p>p2</p><p>p3</p></div>");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe("<div><p>p3</p><p>p1</p><p>p2</p></div>");
+  });
 });
 
 // 疑问：innerHTML 里的内容如何处理，innerHTML + template + render 函数，谁最终生效，优先级最高？

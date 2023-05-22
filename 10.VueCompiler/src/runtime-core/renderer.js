@@ -42,7 +42,7 @@ export function createRenderer(options = nodeOpts) {
       options.setText(element, vnode.children);
     } else if (Array.isArray(vnode.children)) {
       vnode.children.forEach((child) => {
-        patch(child, element);
+        patch(null, child, element);
       });
     }
     if (vnode.props) {
@@ -73,21 +73,112 @@ export function createRenderer(options = nodeOpts) {
       options.render = render.bind(target);
     }
     const subTree = options.render();
-    patch(subTree, container);
+    patch(null, subTree, container);
   }
 
-  function patch(vnode, container) {
+  function updateText(oldVNode, vnode) {
+    if (oldVNode.children !== vnode.children) {
+      options.setText(oldVNode.el, vnode.children);
+    }
+  }
+
+  function patchChildren(oldChildren, newChildren) {
+    // 简单 diff key
+    for (let index = 0; index < newChildren.length; index++) {
+      const newChild = newChildren[index];
+      const oldChild = oldChildren[index];
+      if (newChild.type === oldChild.type) {
+      } else {
+      }
+    }
+    for (let index = 0; index < oldChildren.length; index++) {}
+
+    // 双循环
+    // 两边都有，更新
+    // 新有，老没有，新增
+    // 新没有，老有，删除
+
+    // 暴力更新
+    // 找到短的更新
+    // 节点没法复用
+
+    // 先进的 diff
+    // 双端 diff ，假定数组两端会找到很多相同的节点，头头，头尾，尾头，尾尾比较
+    // Vue3 的新 diff，双端 diff 之后，最长递增子序列。双端 diff 后新老数组都剩下了，说明情况混乱，希望可以经过最少的移动得到新内容
+  }
+
+  function patchElement(oldVNode, vnode) {
+    const el = oldVNode.el;
+    vnode.el = el;
+    // children
+    // 对比 children，递归 children
+    const oldChildren = oldVNode.children;
+    const newChildren = vnode.children;
+    if (typeof oldChildren === "string" && typeof newChildren === "string") {
+      // 文本和文本
+      options.setText(el, newChildren);
+    } else if (Array.isArray(oldChildren) && typeof newChildren === "string") {
+      oldChildren.forEach((child) => {
+        unmount(child);
+      });
+      // 数组和文本
+      options.setText(el, newChildren);
+    } else if (typeof oldChildren === "string" && Array.isArray(newChildren)) {
+      // 文本和数组
+      // 删除旧文本
+      options.setText(el, "");
+      // 挂载新子节点
+      newChildren.forEach((child) => {
+        patch(null, child, el);
+      });
+    } else if (Array.isArray(oldChildren) && Array.isArray(newChildren)) {
+      // 数组和数组
+      patchChildren(oldChildren, newChildren, el);
+    }
+
+    // attributes
+    const oldProps = oldVNode.props;
+    const newProps = vnode.props;
+
+    for (const prop in oldProps) {
+      if (!(prop in newProps)) {
+        // 删除
+        options.patchProp(el, prop, oldProps[prop], null);
+      }
+    }
+
+    for (const prop in newProps) {
+      const v1 = oldProps[prop];
+      const v2 = newProps[prop];
+      if (v1 !== v2) {
+        // 更新
+        options.patchProp(el, prop, v1, v2);
+      }
+    }
+  }
+
+  function patch(oldVNode, vnode, container) {
+    // 先判断类型不同的情况，再处理
+    if (oldVNode) {
+      // 改 tag type
+      if (oldVNode.tag !== vnode.tag) {
+        unmount(oldVNode);
+        oldVNode = null;
+        container._vnode = null;
+      }
+    }
+
     // 更新的第一部分，删除
     if (vnode.tag === Text) {
-      mountText(vnode, container);
+      if (oldVNode) {
+        updateText(oldVNode, vnode);
+      } else {
+        mountText(vnode, container);
+      }
     } else if (typeof vnode.tag === "string") {
-      const oldVNode = container._vnode;
-      if (oldVNode && oldVNode.tag !== vnode.tag) {
-        unmount(oldVNode);
-        mountElement(vnode, container);
-      } else if (oldVNode && oldVNode.tag === vnode.tag) {
-        mountElement(vnode, container);
-      } else if (!oldVNode) {
+      if (oldVNode) {
+        patchElement(oldVNode, vnode);
+      } else {
         mountElement(vnode, container);
       }
     } else if (typeof vnode.tag === "object") {
@@ -101,7 +192,7 @@ export function createRenderer(options = nodeOpts) {
       unmount(container._vnode);
     } else {
       // console.log(vnode, container._vnode);
-      patch(vnode, container);
+      patch(container._vnode, vnode, container);
     }
     container._vnode = vnode;
   }

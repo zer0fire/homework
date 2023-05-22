@@ -22,16 +22,19 @@ export const nodeOpts = {
       const event = key.slice(2).toLowerCase();
       const invokers =
         element._vnodeEventInvoker || (element._vnodeEventInvoker = {});
+      // 'click'
       let invoker = invokers[event];
       if (newValue) {
-        if (invoker) {
-          invoker.value = callback;
-        } else {
+        if (!invoker) {
           invoker = element._vnodeEventInvoker[event] = (e) => {
+            // 懒操作
+            // try catch 错误处理
             invoker.value(e);
           };
           invoker.value = callback;
           element.addEventListener(event, invoker);
+        } else {
+          invoker.value = callback;
         }
       } else if (!newValue && invoker) {
         element.removeEventListener(event, invoker);
@@ -40,7 +43,11 @@ export const nodeOpts = {
       // 如果事件没变怎么办
       element._vnodeEventInvoker[event] = invoker;
     } else {
-      element.setAttribute(key, newValue);
+      if (newValue !== null) {
+        element.setAttribute(key, newValue);
+      } else {
+        element.removeAttribute(key);
+      }
     }
   },
 };
