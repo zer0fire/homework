@@ -82,21 +82,28 @@ export function createRenderer(options = nodeOpts) {
     }
   }
 
-  function patchChildren(oldChildren, newChildren) {
+  function patchChildren(oldChildren, newChildren, parent) {
     // 简单 diff key
+
+    // 双循环
+    for (let index = 0; index < oldChildren.length; index++) {
+      const oldChild = oldChildren[index];
+      if (!newChildren[index] || newChildren[index].type !== oldChild.type) {
+        // 新没有，老有，删除
+        unmount(oldChild);
+      }
+    }
     for (let index = 0; index < newChildren.length; index++) {
       const newChild = newChildren[index];
       const oldChild = oldChildren[index];
-      if (newChild.type === oldChild.type) {
+      if (oldChild && oldChild.type === newChild.type) {
+        // 两边都有，更新
+        patch(oldChild, newChild, parent);
       } else {
+        // 新有，老没有，新增
+        patch(null, newChild, parent);
       }
     }
-    for (let index = 0; index < oldChildren.length; index++) {}
-
-    // 双循环
-    // 两边都有，更新
-    // 新有，老没有，新增
-    // 新没有，老有，删除
 
     // 暴力更新
     // 找到短的更新
