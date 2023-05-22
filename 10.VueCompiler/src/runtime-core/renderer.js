@@ -88,7 +88,8 @@ export function createRenderer(options = nodeOpts) {
     // 双循环
     for (let index = 0; index < oldChildren.length; index++) {
       const oldChild = oldChildren[index];
-      if (!newChildren[index] || newChildren[index].type !== oldChild.type) {
+      const newChild = newChildren[index];
+      if (!newChild || newChild.type !== oldChild.type) {
         // 新没有，老有，删除
         unmount(oldChild);
       }
@@ -99,7 +100,7 @@ export function createRenderer(options = nodeOpts) {
       if (oldChild && oldChild.type === newChild.type) {
         // 两边都有，更新
         patch(oldChild, newChild, parent);
-      } else {
+      } else if (!oldChild) {
         // 新有，老没有，新增
         patch(null, newChild, parent);
       }
