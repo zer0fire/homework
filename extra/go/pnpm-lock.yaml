@@ -1,6 +1,8 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@sabaki/crdt-gametree': 1.1.0
+  '@sabaki/go-board': ^1.4.3
   '@types/node': ^20.2.1
   doken: ^1.0.2
   iconv-lite: ^0.6.3
@@ -8,6 +10,8 @@ specifiers:
   typescript: ^5.0.4
 
 dependencies:
+  '@sabaki/crdt-gametree': 1.1.0
+  '@sabaki/go-board': 1.4.3
   doken: 1.0.2
   iconv-lite: 0.6.3
   jschardet: 3.0.0
@@ -17,6 +21,21 @@ devDependencies:
   typescript: 5.0.4
 
 packages:
+
+  /@sabaki/crdt-gametree/1.1.0:
+    resolution: {integrity: sha512-IC7CPwHPRb01VQQYSYZyaLJS9i2pTa7OfJRT91Lk9IoyKJBG+oSwfNnViiGIhq4PPV7j3U+8zoo0/X9330KFwg==}
+    dependencies:
+      '@sabaki/immutable-gametree': 1.9.4
+      uuid: 3.4.0
+    dev: false
+
+  /@sabaki/go-board/1.4.3:
+    resolution: {integrity: sha512-tXonP7vw7bYcXKSVrN1bhkb/QQi5EfTbDSflBffSp2iabbFbz4JyhEyw0ekbuwR0ntBq6iHky6BfCGF69Z4ttg==}
+    dev: false
+
+  /@sabaki/immutable-gametree/1.9.4:
+    resolution: {integrity: sha512-7DKEu/0zYOrPKCaj54zkHxdxw2sRUOki+br6NxT2sbhLiXNCDjKj1nSvGyMD9TdKzM2e4B/kFm58rE9bk6dpKQ==}
+    dev: false
 
   /@types/node/20.2.1:
     resolution: {integrity: sha512-DqJociPbZP1lbZ5SQPk4oag6W7AyaGMO6gSfRwq3PWl4PXTwJpRQJhDq4W0kzrg3w6tJ1SwlvGZ5uKFHY13LIg==}
@@ -47,3 +66,8 @@ packages:
     engines: {node: '>=12.20'}
     hasBin: true
     dev: true
+
+  /uuid/3.4.0:
+    resolution: {integrity: sha1-sj5DWK+oogL+ehAK8fX4g/AgB+4=}
+    hasBin: true
+    dev: false

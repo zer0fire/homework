@@ -1,22 +1,54 @@
-import { createTokenizer, regexRule } from "doken";
+import { Token, createTokenizer, regexRule } from "doken";
 import iconv from "iconv-lite";
 import jschardet from "jschardet";
 
 class Peekable {
-  peekedItem: any;
-  iterator: any;
+  peekedItem: IteratorResult<
+    Token<
+      | "parenthesis"
+      | "semicolon"
+      | "prop_ident"
+      | "c_value_type"
+      | "invalid"
+      | "_whitespace",
+      string
+    >
+  >;
+  iterator: IterableIterator<
+    Token<
+      | "parenthesis"
+      | "semicolon"
+      | "prop_ident"
+      | "c_value_type"
+      | "invalid"
+      | "_whitespace",
+      string
+    >
+  >;
   peeked: boolean;
 
-  constructor(iterator: Iterable<any>) {
+  constructor(
+    iterator: Generator<
+      Token<
+        | "parenthesis"
+        | "semicolon"
+        | "prop_ident"
+        | "c_value_type"
+        | "invalid"
+        | "_whitespace",
+        string
+      >
+    >
+  ) {
     this.iterator = iterator[Symbol.iterator]();
-    this.peekedItem = null;
+    this.peekedItem = null!;
     this.peeked = false;
   }
 
   next() {
     let next = this.peeked ? this.peekedItem : this.iterator.next();
 
-    this.peekedItem = null;
+    this.peekedItem = null!;
     this.peeked = false;
 
     return next;
@@ -158,7 +190,17 @@ function _parseTokens(
   return anchor;
 }
 export const parseTokens = function (
-  tokens: any,
+  tokens: Generator<
+    Token<
+      | "parenthesis"
+      | "semicolon"
+      | "prop_ident"
+      | "c_value_type"
+      | "invalid"
+      | "_whitespace",
+      string
+    >
+  >,
   {
     getId = (
       (id: number): Function =>

@@ -5,13 +5,15 @@
   "main": "sgf.js",
   "type": "module",
   "scripts": {
-    "dev": "ts-node --esm parseFile.ts",
+    "dev": "ts-node --esm go.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sabaki/go-board": "^1.4.3",
+    "@sabaki/crdt-gametree": "1.1.0",
     "doken": "^1.0.2",
     "iconv-lite": "^0.6.3",
     "jschardet": "^3.0.0"
