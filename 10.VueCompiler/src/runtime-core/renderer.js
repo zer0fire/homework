@@ -36,7 +36,7 @@ export function createRenderer(options = nodeOpts) {
     vnode.el = null;
   }
 
-  function mountElement(vnode, container) {
+  function mountElement(vnode, container, anchor) {
     const element = options.createElement(vnode.tag);
     if (typeof vnode.children === "string") {
       options.setText(element, vnode.children);
@@ -51,7 +51,7 @@ export function createRenderer(options = nodeOpts) {
         options.patchProp(element, key, null, vnode.props[key]);
       }
     }
-    options.appendChild(container, element);
+    options.insertBefore(element, container, anchor);
     vnode.el = element;
     return element;
   }
@@ -86,25 +86,25 @@ export function createRenderer(options = nodeOpts) {
     // 简单 diff key
 
     // 双循环
-    for (let index = 0; index < oldChildren.length; index++) {
-      const oldChild = oldChildren[index];
-      const newChild = newChildren[index];
-      if (!newChild || newChild.type !== oldChild.type) {
-        // 新没有，老有，删除
-        unmount(oldChild);
-      }
-    }
-    for (let index = 0; index < newChildren.length; index++) {
-      const newChild = newChildren[index];
-      const oldChild = oldChildren[index];
-      if (oldChild && oldChild.type === newChild.type) {
-        // 两边都有，更新
-        patch(oldChild, newChild, parent);
-      } else if (!oldChild) {
-        // 新有，老没有，新增
-        patch(null, newChild, parent);
-      }
-    }
+    // for (let index = 0; index < oldChildren.length; index++) {
+    //   const oldChild = oldChildren[index];
+    //   const newChild = newChildren[index];
+    //   if (!newChild || newChild.type !== oldChild.type) {
+    //     // 新没有，老有，删除
+    //     unmount(oldChild);
+    //   }
+    // }
+    // for (let index = 0; index < newChildren.length; index++) {
+    //   const newChild = newChildren[index];
+    //   const oldChild = oldChildren[index];
+    //   if (oldChild && oldChild.type === newChild.type) {
+    //     // 两边都有，更新
+    //     patch(oldChild, newChild, parent);
+    //   } else if (!oldChild) {
+    //     // 新有，老没有，新增
+    //     patch(null, newChild, parent);
+    //   }
+    // }
 
     // 暴力更新
     // 找到短的更新
@@ -113,6 +113,57 @@ export function createRenderer(options = nodeOpts) {
     // 先进的 diff
     // 双端 diff ，假定数组两端会找到很多相同的节点，头头，头尾，尾头，尾尾比较
     // Vue3 的新 diff，双端 diff 之后，最长递增子序列。双端 diff 后新老数组都剩下了，说明情况混乱，希望可以经过最少的移动得到新内容
+
+    // 新的里面取一个，找到老的里面的相同的位置，这个叫参照索引
+    // 如果后续的节点的老索引，比参照索引小，说明需要移动的新索引
+    // 如果后续的节点的老索引，比参照索引大，说明参照索引需要改变成当前的老索引
+    // 在什么时候创建新的内容
+    let referIndex = -1;
+    for (let i = 0; i < newChildren.length; i++) {
+      let newChild = newChildren[i];
+      let j = 0;
+      for (; j < oldChildren.length; j++) {
+        if (newChild && sameNode(newChild, oldChildren[j])) {
+          if (j >= referIndex) {
+            referIndex = j;
+          } else {
+            const anchor =
+              oldChildren[referIndex + 1] && oldChildren[referIndex + 1].el;
+            options.insertBefore(oldChildren[j].el, parent, anchor);
+          }
+          break;
+        }
+      }
+      if (j >= oldChildren.length) {
+        // TODO: 如何在 new 里获取 old 的 el，或者在 old 里面找到 create 插入位置的内容
+        const prevIndex = oldChildren.findIndex(
+          (it) => newChildren[i - 1] && sameNode(newChildren[i - 1], it)
+        );
+        const prevVNode = oldChildren[prevIndex];
+        let anchor = null;
+        if (prevVNode) {
+          anchor = prevVNode.el.nextSibling;
+        } else {
+          anchor = parent.firstChild;
+        }
+        patch(null, newChildren[i], parent, anchor);
+      }
+    }
+    for (let i = 0; i < oldChildren.length; i++) {
+      const oldChild = oldChildren[i];
+      if (
+        newChildren.findIndex((newChild) => {
+          return sameNode(newChild, oldChild);
+        }) === -1
+      ) {
+        // remove
+        unmount(oldChild);
+      }
+    }
+  }
+
+  function sameNode(a, b) {
+    return a.key === b.key && a.tag === b.tag;
   }
 
   function patchElement(oldVNode, vnode) {
@@ -165,7 +216,7 @@ export function createRenderer(options = nodeOpts) {
     }
   }
 
-  function patch(oldVNode, vnode, container) {
+  function patch(oldVNode, vnode, container, anchor = null) {
     // 先判断类型不同的情况，再处理
     if (oldVNode) {
       // 改 tag type
@@ -187,7 +238,7 @@ export function createRenderer(options = nodeOpts) {
       if (oldVNode) {
         patchElement(oldVNode, vnode);
       } else {
-        mountElement(vnode, container);
+        mountElement(vnode, container, anchor);
       }
     } else if (typeof vnode.tag === "object") {
       mountComponent(vnode, container);

@@ -276,6 +276,104 @@ describe("renderer", () => {
     renderer.render(newVnode, container);
     expect(container.innerHTML).toBe("<div><p>p3</p><p>p1</p><p>p2</p></div>");
   });
+  test("diff：create node", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "p",
+          children: "p1",
+          key: "1",
+        },
+        {
+          tag: "p",
+          children: "p2",
+          key: "2",
+        },
+        {
+          tag: "p",
+          children: "p3",
+          key: "3",
+        },
+      ],
+    };
+    const newVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "p",
+          children: "p4",
+          key: "4",
+        },
+        {
+          tag: "p",
+          children: "p3",
+          key: "3",
+        },
+        {
+          tag: "p",
+          children: "p1",
+          key: "1",
+        },
+        {
+          tag: "p",
+          children: "p5",
+          key: "5",
+        },
+        {
+          tag: "p",
+          children: "p2",
+          key: "2",
+        },
+      ],
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("<div><p>p1</p><p>p2</p><p>p3</p></div>");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe(
+      "<div><p>p4</p><p>p3</p><p>p1</p><p>p5</p><p>p2</p></div>"
+    );
+  });
+  test("diff：node remove", () => {
+    const renderer = createRenderer();
+    const container = document.createElement("div");
+    const oldVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "p",
+          children: "p1",
+          key: "1",
+        },
+        {
+          tag: "p",
+          children: "p2",
+          key: "2",
+        },
+        {
+          tag: "p",
+          children: "p3",
+          key: "3",
+        },
+      ],
+    };
+    const newVnode = {
+      tag: "div",
+      children: [
+        {
+          tag: "p",
+          children: "p3",
+          key: "3",
+        },
+      ],
+    };
+    renderer.render(oldVnode, container);
+    expect(container.innerHTML).toBe("<div><p>p1</p><p>p2</p><p>p3</p></div>");
+    renderer.render(newVnode, container);
+    expect(container.innerHTML).toBe("<div><p>p3</p></div>");
+  });
 });
 
 // 疑问：innerHTML 里的内容如何处理，innerHTML + template + render 函数，谁最终生效，优先级最高？

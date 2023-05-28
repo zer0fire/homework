@@ -15,6 +15,9 @@ export const nodeOpts = {
   createTextNode: function (text) {
     return document.createTextNode(text);
   },
+  insertBefore: function (insertChild, parent, anchor = null) {
+    parent.insertBefore(insertChild, anchor);
+  },
   patchProp(element, key, oldValue, newValue) {
     if (key.startsWith("on")) {
       // 事件
