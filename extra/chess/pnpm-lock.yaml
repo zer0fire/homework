@@ -1,0 +1,25 @@
+lockfileVersion: 5.3
+
+specifiers:
+  '@types/node': ^20.2.3
+  typescript: ^5.0.4
+
+devDependencies:
+  '@types/node': registry.npmmirror.com/@types/node/20.2.3
+  typescript: registry.npmmirror.com/typescript/5.0.4
+
+packages:
+
+  registry.npmmirror.com/@types/node/20.2.3:
+    resolution: {integrity: sha512-pg9d0yC4rVNWQzX8U7xb4olIOFuuVL9za3bzMT2pu2SU0SNEi66i2qrvhE2qt0HvkhuCaWJu7pLNOt/Pj8BIrw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/node/-/node-20.2.3.tgz}
+    name: '@types/node'
+    version: 20.2.3
+    dev: true
+
+  registry.npmmirror.com/typescript/5.0.4:
+    resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/typescript/-/typescript-5.0.4.tgz}
+    name: typescript
+    version: 5.0.4
+    engines: {node: '>=12.20'}
+    hasBin: true
+    dev: true

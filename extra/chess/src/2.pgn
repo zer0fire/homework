@@ -1,0 +1,21 @@
+[Event "Casual Standard game"]
+[Site "https://lichess.org/KhhXFZrY"]
+[Date "2023.05.22"]
+[White "kiroro11"]
+[Black "lichess AI level 1"]
+[Result "1/2-1/2"]
+[UTCDate "2023.05.22"]
+[UTCTime "03:06:28"]
+[WhiteElo "1500"]
+[BlackElo "?"]
+[Variant "From Position"]
+[TimeControl "-"]
+[ECO "?"]
+[Opening "?"]
+[Termination "Normal"]
+[FEN "4k3/8/8/8/8/8/4PPPP/3QKBNR w K - 0 1"]
+[SetUp "1"]
+
+1. Qd6 Kf7 2. Qd7+ Kf8 3. f4 Kg8 4. e4 Kh8 5. Ba6 Kg8 6. h4 Kf8 7. Rh3 Kg8 8. Rg3+ Kh8 9. Qf7 1/2-1/2
+
+
