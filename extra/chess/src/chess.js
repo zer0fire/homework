@@ -1781,10 +1781,10 @@ var Chess = /** @class */ (function () {
     if (result && Object.keys(this._header).length && !this._header["Result"]) {
       this.header("Result", result);
     }
-    console.log({
-      result,
-      history: JSON.stringify(this._history, " ", 4),
-    });
+    // console.log({
+    //   result,
+    //   history: JSON.stringify(this._history, " ", 4),
+    // });
   };
   /*
    * Convert a move from 0x88 coordinates to Standard Algebraic Notation
@@ -2200,14 +2200,17 @@ var Chess = /** @class */ (function () {
   };
   return Chess;
 })();
-
+console.time();
 let chess = new Chess();
-console.log({
-  loadPgn: chess.loadPgn(
-    fs.readFileSync(path.join(process.cwd(), "./src/2.pgn")).toString()
-  ),
-  header: chess.header().FEN,
-});
-// console.log(chess);
+chess.loadPgn(
+  fs.readFileSync(path.join(process.cwd(), "./src/3.pgn")).toString()
+);
+// console.log({
+//   loadPgn: chess.loadPgn(
+//     fs.readFileSync(path.join(process.cwd(), "./src/3.pgn")).toString()
+//   ),
+//   header: chess.header().FEN,
+// });
+console.timeEnd();
 
 exports.Chess = Chess;

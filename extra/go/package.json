@@ -5,7 +5,7 @@
   "main": "sgf.js",
   "type": "module",
   "scripts": {
-    "dev": "ts-node --esm go.ts",
+    "dev": "ts-node --esm ./src/parse/parseFile.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -1,6 +1,9 @@
-import { Token, createTokenizer, regexRule } from "doken";
+import { Token } from "doken";
 import iconv from "iconv-lite";
 import jschardet from "jschardet";
+
+import pkg from "doken";
+const { createTokenizer, regexRule } = pkg;
 
 class Peekable {
   peekedItem: IteratorResult<
@@ -85,8 +88,10 @@ function _parseTokens(
   } | null = null;
   let property: any = null;
 
-  while (!peekAbleTokens.peek().done) {
-    let { type, value, row, col } = peekAbleTokens.peek().value;
+  const res1 = peekAbleTokens.peek();
+  while (res1 && !res1.done) {
+    const res2 = peekAbleTokens.peek();
+    let { type, value, row, col } = res2.value;
 
     if (type === "parenthesis" && value === "(") break;
     if (type === "parenthesis" && value === ")") {
