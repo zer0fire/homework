@@ -2202,15 +2202,18 @@ var Chess = /** @class */ (function () {
 })();
 console.time();
 let chess = new Chess();
-chess.loadPgn(
-  fs.readFileSync(path.join(process.cwd(), "./src/3.pgn")).toString()
-);
+// chess.loadPgn(fs.readFileSync(path.join(__dirname, "./2.26-2.pgn")).toString());
 // console.log({
 //   loadPgn: chess.loadPgn(
 //     fs.readFileSync(path.join(process.cwd(), "./src/3.pgn")).toString()
 //   ),
 //   header: chess.header().FEN,
 // });
+console.log({
+  convertSanToMove: chess.convertSanToMove("e4", true),
+  // history: chess.pgn(),
+  // header: chess.header(),
+});
 console.timeEnd();
 
 exports.Chess = Chess;

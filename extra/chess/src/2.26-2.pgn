@@ -1,0 +1,21 @@
+﻿[Event "?"]
+[Site "?"]
+[Date "2021.11.??"]
+[Round "?"]
+[White "2.26-2"]
+[Black "?"]
+[Result "*"]
+[ECO "C45"]
+[Annotator "Miss-Regina"]
+[PlyCount "19"]
+[SourceVersionDate "2017.09.30"]
+
+1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Bc5 5. Nb3 (5. Be3 Qf6 (5... Nf6 6. Nxc6
+) 6. c3 Nge7 7. Be2 O-O 8. O-O d5 9. Nxc6 Qxc6 10. Bxc5 Qxc5) 5... Bb6 6. a4 (
+6. Nc3 Qf6 (6... d6 7. a4 (7. Nd5) 7... a5 (7... a6 8. Nd5 Ba7 9. Bg5 Qxg5 10.
+Nxc7+ Ke7 (10... Kd8) (10... Kd7 11. Nxa8 Nf6 (11... b6 12. g3 (12. a5) 12...
+Bb7 13. Bh3+ Kd8 (13... Ke7 14. Nc7) 14. Qxd6+) 12. Qd2 Qxd2+ 13. Nxd2 b6 14.
+Nc4) 11. Nxa8) 8. Nd5 Nf6 9. Bg5 (9. Nxb6 cxb6) 9... Bxf2+) 7. Qe2 Nge7 8. Nd5
+Nxd5 9. exd5+ Ne7 10. a4) 6... a6 (6... a5) 7. Bd3 d6 8. O-O Nf6 9. Nc3 O-O 10.
+Bg5 *
+
