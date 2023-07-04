@@ -1,0 +1,23 @@
+lockfileVersion: 5.3
+
+specifiers:
+  async-mutex: ^0.4.0
+
+dependencies:
+  async-mutex: registry.npmmirror.com/async-mutex/0.4.0
+
+packages:
+
+  registry.npmmirror.com/async-mutex/0.4.0:
+    resolution: {integrity: sha512-eJFZ1YhRR8UN8eBLoNzcDPcy/jqjsg6I1AP+KvWQX80BqOSW1oJPJXDylPUEeMr2ZQvHgnQ//Lp6f3RQ1zI7HA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/async-mutex/-/async-mutex-0.4.0.tgz}
+    name: async-mutex
+    version: 0.4.0
+    dependencies:
+      tslib: registry.npmmirror.com/tslib/2.5.3
+    dev: false
+
+  registry.npmmirror.com/tslib/2.5.3:
+    resolution: {integrity: sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.5.3.tgz}
+    name: tslib
+    version: 2.5.3
+    dev: false
