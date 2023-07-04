@@ -1,0 +1,9 @@
+# docker container run -d -p 80:80 wordpress
+version: "3.8"
+services:
+  my-wordpress:
+    # container_name: jspang
+    # image: wordpress:lastest
+    # ports:
+    #   - 80:80
+    build: ./file
