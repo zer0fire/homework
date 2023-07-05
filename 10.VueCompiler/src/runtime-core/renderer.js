@@ -135,7 +135,7 @@ export function createRenderer(options = nodeOpts) {
         }
       }
       if (j >= oldChildren.length) {
-        // TODO: 如何在 new 里获取 old 的 el，或者在 old 里面找到 create 插入位置的内容
+        // TODO: 优化在 new 里获取 old 的 el，或者在 old 里面找到 create 插入位置的内容
         const prevIndex = oldChildren.findIndex(
           (it) => newChildren[i - 1] && sameNode(newChildren[i - 1], it)
         );
@@ -149,6 +149,7 @@ export function createRenderer(options = nodeOpts) {
         patch(null, newChildren[i], parent, anchor);
       }
     }
+    // TODO: 删除优化
     for (let i = 0; i < oldChildren.length; i++) {
       const oldChild = oldChildren[i];
       if (
