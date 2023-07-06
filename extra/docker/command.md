@@ -33,6 +33,7 @@ docker container rm $(code) -f
 docker rm
 
 <!-- 端口映射 -->
+
 <!-- 前台模式 attach 模式 -->
 
 -p 端口映射，前面是本机端口，后面是容器的端口，比如吧 Docker 的 80 映射到就本机的 90，需要 90:80
@@ -67,7 +68,7 @@ docker container run -it ubuntu sh
 exec 执行，-it 交互模式，sh 交互的方式，用 shell 交互
 docker exec -it $(code) sh
 
-## 获取镜像的机种方式
+## 获取镜像的几种方式
 
 pull from registry (online)
 Dockerfile (online)
@@ -309,7 +310,7 @@ docker container run -it -v ${pwd}:/app node sh
 
 docker container run
 
-docker container inspect --format '{{.Config.ExposedPorts}}' <ContainerID>
+docker container inspect --format '{{.Config.ExposedPorts}}' `<ContainerID>`
 
 docker-compose.yml
 
