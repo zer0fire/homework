@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./vite-project/dist:/usr/share/nginx/html
+  pm2:
+    build: .
+    ports:
+      - 3000:3000

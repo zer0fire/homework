@@ -145,6 +145,8 @@ docker image tag $(old image name) $(new image name)
 docker login
 docker image push $(name:[tag])
 
+docker container run -d $(image-name) -p 80:80
+
 <!-- Docker file 关键字 -->
 
 ## FROM
