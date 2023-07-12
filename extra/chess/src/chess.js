@@ -2209,11 +2209,19 @@ let chess = new Chess();
 //   ),
 //   header: chess.header().FEN,
 // });
-console.log({
-  convertSanToMove: chess.convertSanToMove("e4", true),
-  // history: chess.pgn(),
-  // header: chess.header(),
-});
+chess.load("3qkbn1/r3p3/p4p2/1pN4p/8/P4BP1/1P2QP2/5RK1 w - - 0 1");
+const pgn = chess.pgn();
+console.log(pgn);
+console.log(
+  chess.loadPgn(`[SetUp "1"]
+[FEN "3qkbn1/r3p3/p4p2/1pN4p/8/P4BP1/1P2QP2/5RK1 w - - 0 1"]
+`)
+);
+// console.log({
+//   convertSanToMove: chess.convertSanToMove("e4", true),
+//   // history: chess.pgn(),
+//   // header: chess.header(),
+// });
 console.timeEnd();
 
 exports.Chess = Chess;
