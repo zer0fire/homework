@@ -1,14 +1,33 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@mliebelt/pgn-parser': ^1.4.12
   '@types/node': ^20.2.3
   typescript: ^5.0.4
+
+dependencies:
+  '@mliebelt/pgn-parser': registry.npmmirror.com/@mliebelt/pgn-parser/1.4.12
 
 devDependencies:
   '@types/node': registry.npmmirror.com/@types/node/20.2.3
   typescript: registry.npmmirror.com/typescript/5.0.4
 
 packages:
+
+  registry.npmmirror.com/@mliebelt/pgn-parser/1.4.12:
+    resolution: {integrity: sha512-z0FNbeGpaiWlFXjJe68oI6ctbjZh9hUWEOnAlYhiVhtzM9bgcdKdg6juX90+GSr8ZFLYMzgT4vxnIqENirnd7Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@mliebelt/pgn-parser/-/pgn-parser-1.4.12.tgz}
+    name: '@mliebelt/pgn-parser'
+    version: 1.4.12
+    hasBin: true
+    dependencies:
+      '@mliebelt/pgn-types': registry.npmmirror.com/@mliebelt/pgn-types/1.0.4
+    dev: false
+
+  registry.npmmirror.com/@mliebelt/pgn-types/1.0.4:
+    resolution: {integrity: sha512-l1VUSp8pmdsr6HNTaZIQdmd70XqmtCp5jd0fOi4KpR/mq+NBbE1A178a6+rRy001A0/Li1rUxpssDzcYBR87GQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@mliebelt/pgn-types/-/pgn-types-1.0.4.tgz}
+    name: '@mliebelt/pgn-types'
+    version: 1.0.4
+    dev: false
 
   registry.npmmirror.com/@types/node/20.2.3:
     resolution: {integrity: sha512-pg9d0yC4rVNWQzX8U7xb4olIOFuuVL9za3bzMT2pu2SU0SNEi66i2qrvhE2qt0HvkhuCaWJu7pLNOt/Pj8BIrw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/node/-/node-20.2.3.tgz}

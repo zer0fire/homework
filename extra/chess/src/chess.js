@@ -257,7 +257,7 @@ function validateFen(fen) {
   }
   // 2nd criterion: move number field is a integer value > 0?
   var moveNumber = parseInt(tokens[5], 10);
-  if (isNaN(moveNumber) || moveNumber <= 0) {
+  if (isNaN(moveNumber) || moveNumber < 0) {
     return {
       ok: false,
       error: "Invalid FEN: move number must be a positive integer",
@@ -2200,7 +2200,7 @@ var Chess = /** @class */ (function () {
   };
   return Chess;
 })();
-console.time();
+// console.time();
 let chess = new Chess();
 // chess.loadPgn(fs.readFileSync(path.join(__dirname, "./2.26-2.pgn")).toString());
 // console.log({
@@ -2209,14 +2209,43 @@ let chess = new Chess();
 //   ),
 //   header: chess.header().FEN,
 // });
-chess.load("3qkbn1/r3p3/p4p2/1pN4p/8/P4BP1/1P2QP2/5RK1 w - - 0 1");
-const pgn = chess.pgn();
-console.log(pgn);
-console.log(
-  chess.loadPgn(`[SetUp "1"]
-[FEN "3qkbn1/r3p3/p4p2/1pN4p/8/P4BP1/1P2QP2/5RK1 w - - 0 1"]
-`)
-);
+const { parseGame } = require("@mliebelt/pgn-parser");
+
+// chess.load("3qkbn1/r3p3/p4p2/1pN4p/8/P4BP1/1P2QP2/5RK1 w - - 0 1");
+// const fen = "3qkbn1/r3p3/p4p2/1pN4p/8/P4BP1/1P2QP2/5RK1 w - - 0 1";
+// const pgn = chess.pgn();
+// console.log(pgn);
+// console.log(
+//   chess.loadPgn(`[SetUp "1"]
+// [FEN "${fen}"]
+// `)
+// );
+// const constPgn = `[SetUp "1"]
+// [FEN "${fen}"]
+
+// *`;
+const pgn1 = `[Event "?"]
+[Site "?"]
+[Date "2023.06.04"]
+[Round "?"]
+[White "1.#3-8"]
+[Black "?"]
+[Result "*"]
+[Annotator "Miss-Regina"]
+[SetUp "1"]
+[FEN "6r1/p2n3R/7Q/1kpqb3/3p1B2/8/PPP5/2K5 w - - 0 0"]
+[PlyCount "5"]
+[SourceVersionDate "2023.06.19"]
+
+{[#]} 1. a4+ Kxa4 2. Qa6+ Kb4 3. Bd2# *`;
+
+chess.loadPgn(pgn1);
+// console.log(chess.history());
+
+// const game = parseGame(pgn2);
+// console.log(JSON.stringify(game, "", 4));
+
+// chess.loadPgn(pgn1);
 // console.log({
 //   convertSanToMove: chess.convertSanToMove("e4", true),
 //   // history: chess.pgn(),
@@ -2225,3 +2254,8 @@ console.log(
 console.timeEnd();
 
 exports.Chess = Chess;
+
+// 如何快速操作一棵树;
+// 把树拍平;
+
+// [0, 1, 2,]
