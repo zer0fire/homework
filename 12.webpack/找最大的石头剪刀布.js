@@ -1,5 +1,11 @@
 // function recursion(a, b = 0, c = 0) {}
 
+// 红黄蓝，多者为胜
+// 4 12
+// 2 2 0
+// 1 2 1
+// 4 0 0
+
 function guessGame(num = 100) {
   let count = 0;
 
