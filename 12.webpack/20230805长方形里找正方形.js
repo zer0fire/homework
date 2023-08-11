@@ -3,17 +3,19 @@
 
 // 边长循环
 //
+// 长宽不能相等
 
-function check(len) {
+function check(len = 1000) {
   let total = 0;
-  // 8 * 5 -> 5
+  // 8 * 5 -> 5 -> 5 * 3 -> 3 -> 3 * 2 -> 2 -> 2 * 1 -> 1 -> 1
   // 8 * 4 -> 2
   // 8 * 3 -> 5
   // 8 * 2 -> 4
   // 8 * 1 -> 8
+  // j 代表长，i 代表宽，i < j， i 可以等与 j - 1
   for (let j = len; j > 0; j--) {
-    for (let i = len; i > j; i--) {
-      if (i !== j && cut(i, j) === 20) {
+    for (let i = j - 1; i > 0; i--) {
+      if (cut(i, j) === 20) {
         total += 1;
       }
     }
