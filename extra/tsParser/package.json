@@ -1,0 +1,6 @@
+{
+	"dependencies": {
+		"acorn": "^8.10.0",
+		"acorn-typescript": "^1.4.1"
+	}
+}
