@@ -7,9 +7,9 @@ interface Callback {
 function walk(ast: Node, callback?: Callback) {
   for (const value in ast) {
     if (typeof ast[value] === "object") {
-      callback?.enter && callback?.enter(ast);
+      callback?.enter && callback?.enter(ast[value]);
       walk(ast[value], callback);
-      callback?.leave && callback?.leave(ast);
+      callback?.leave && callback?.leave(ast[value]);
     }
   }
 }
