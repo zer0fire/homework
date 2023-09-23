@@ -13,9 +13,9 @@
   - 【 Project name 】**GameFactory Platform**<br/>
 
     【 Project Description 】<br/>
-    Mainly for course-ware making supporting platform development, combined with the function of Cocos, using React and Redux. Through the reduce component and refactor code, reduce code file size about 12KB <br/>
-    Mainly uses light services to call cloud functions and store data in the back-end.<br/>
-    The main function is to provide visual interface for the executive planner and other users in the Electron client of Cocos through the extension of its own Cocos framework, such as quick assembly of default Prefab resources, automatic resource completion, resource search in PreFab, quick image conversion, multi-terminal synchronous detection, etc<br/>
+    Mainly for course-ware making supporting platform development, combined with the function of Cocos, using React and Redux. Through the reduce the component and batch processing code file, reduce code file size about 12KB <br/>
+    Mainly uses Nest.js as back-end application, uses Mysql to store data.<br/>
+    The main function is to provide visual interface for the executive planner and other users in client, such as quick assembly of default Prefab resources, automatic resource completion, resource search in PreFab, quick image conversion, multi-terminal synchronous detection, etc<br/>
 
 - 2019.06 - 2020.10, Beijing Hank-Times Group, Front-end Developer
 
