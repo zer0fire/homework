@@ -4,6 +4,8 @@
 - Education: InnerMongolia University of Technology, Major Internet of Things
 - Contact: 18447073846; Email: hai@zer0fire.me
 
+<br/>
+
 #### WORK EXPERIENCE
 
 - 2021.11 - Current, Spark Education Group,Front-end Developer
