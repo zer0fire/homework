@@ -1,8 +1,8 @@
 ## XiaoWang
 
-- Age: 27
+- Age: xx
 - Education: XXX University of Technology, Major Internet of Things
-- Contact: 184xxxxxxxx; Email: hai@zer0fire.me
+- Contact: xxxxxxxxxxx; Email: xxxxx@xxxx
 
 <br/>
 
