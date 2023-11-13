@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Calculator</title>
+    <style>
+      .operation {
+        display: flex;
+        width: 120px;
+        flex-wrap: wrap;
+      }
+      .op-cell {
+        width: 40px;
+      }
+      .dp-text {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator">
+      <input class="dp-text" type="text" />
+      <div class="operation">
+        <button class="op-cell">1</button>
+        <button class="op-cell">2</button>
+        <button class="op-cell">3</button>
+        <button class="op-cell">4</button>
+        <button class="op-cell">5</button>
+        <button class="op-cell">6</button>
+        <button class="op-cell">7</button>
+        <button class="op-cell">8</button>
+        <button class="op-cell">9</button>
+        <button class="op-cell">.</button>
+        <button class="op-cell">0</button>
+        <button class="op-cell">AC</button>
+        <button class="op-cell">+</button>
+        <button class="op-cell">-</button>
+        <button class="op-cell">*</button>
+        <button class="op-cell">/</button>
+        <button class="op-cell">=</button>
+      </div>
+    </div>
+    <script>
+      const opList = document.querySelectorAll(".op-cell");
+      const input = document.querySelector("input");
+      let data = "";
+      opList.forEach((ele) => {
+        ele.addEventListener("click", (e) => {
+          if (e.target.innerText === "AC") {
+            input.value = "";
+            data = "";
+            return;
+          }
+          if (e.target.innerText === "=") {
+            input.value = eval(data);
+            data = eval(data);
+            return;
+          }
+          data += e.target.innerText;
+          input.value = data;
+        });
+      });
+    </script>
+  </body>
+</html>
