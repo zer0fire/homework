@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PIRATE KING</title>
+    <style>
+      html {
+        background-color: rgb(56, 56, 59);
+        color: white;
+      }
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+      }
+      a {
+        color: rgb(141, 217, 191);
+      }
+      main h1.title {
+        color: rgb(82, 156, 202);
+        /* border-bottom: 1px solid white; */
+        margin: 10px 5px;
+        font-size: 20px;
+      }
+      main .item {
+        display: list-item;
+        margin-left: 25px;
+      }
+      main .item::marker {
+        color: rgb(82, 156, 202);
+      }
+      header {
+        display: flex;
+        justify-content: center;
+        padding: 0px 15px;
+      }
+      header .split {
+        color: black;
+      }
+      header .item {
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .resume-name {
+        text-align: center;
+      }
+      .exp,
+      .edu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 0px 10px;
+      }
+      .exp h1,
+      .edu h1 {
+        font-size: 16px;
+        width: 30%;
+      }
+      .exp .tag,
+      .edu .tag {
+        width: 30%;
+        /* border-bottom: 1px solid; */
+        font-weight: bolder;
+        text-align: center;
+      }
+      .exp .period,
+      .edu .period {
+        width: 40%;
+        text-align: right;
+        display: flex;
+        justify-content: right;
+      }
+      .exp .item,
+      .edu .item {
+        width: 100%;
+      }
+      .period .location,
+      .period .time {
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="resume-name">Wang Meng</h1>
+    <header>
+      <div class="item"><a href="">LinkedIn</a></div>
+      <div class="split">|</div>
+      <div class="item">184-4707-3846</div>
+      <div class="split">|</div>
+      <div class="item"><a href="">site</a></div>
+      <div class="split">|</div>
+      <div class="item">email: hai@zer0fire.me</div>
+      <div class="split">|</div>
+      <div class="item"><a href="">GitHub</a></div>
+    </header>
+    <main class="skills">
+      <h1 class="title">Skills</h1>
+      <div class="item">C#</div>
+      <div class="item">Azure</div>
+      <div class="item">Microservices</div>
+    </main>
+    <main class="experience">
+      <h1 class="title">Experience</h1>
+      <div class="exp">
+        <h1>Frontend Engineer</h1>
+        <div class="tag">Spark Education Group</div>
+        <div class="period">
+          <div class="time">07/2021 - Current</div>
+        </div>
+        <div class="item"><b>PRIATE KING</b></div>
+      </div>
+      <div class="exp">
+        <h1>Software Engineer</h1>
+        <div class="tag">Microsoft</div>
+        <div class="period">
+          <div class="location">Redmond, WA, USA</div>
+          <div class="time">07/2021 - Current</div>
+        </div>
+        <div class="item"><b>PRIATE KING</b></div>
+      </div>
+    </main>
+    <main class="education">
+      <h1 class="title">Education</h1>
+      <div class="edu">
+        <h1>Bachelor of IOT Engineering</h1>
+        <div class="tag">IMUT</div>
+        <div class="period">
+          <div class="location">Inner Mongolia, PRC</div>
+          <div class="time">09/2014 - 07/2018</div>
+        </div>
+      </div>
+    </main>
+    <main class="project">
+      <h1 class="title">Project</h1>
+      <div class="item">COLORMAN</div>
+      <div class="item">SPIKE</div>
+    </main>
+    <main class="others">
+      <h1 class="title">Others</h1>
+      <div class="item">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam natus
+        optio at placeat animi culpa, accusantium fugiat distinctio cum, nulla
+        ea unde aperiam pariatur mollitia neque expedita, ipsa dolor sint?
+      </div>
+    </main>
+  </body>
+</html>
