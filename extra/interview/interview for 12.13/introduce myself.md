@@ -1,9 +1,10 @@
 First, thanks for this opportunity to have this interview
 
-My name is Alex Wang, I've graduated from the Inner Mongolia University of Technology. I specialized on the Internet of Thing
+my name is WangMeng and My English name is Alex Wang, I've graduated from the Inner Mongolia University of Technology. I specialized on the Internet of Thing
 I'm considering that I am qualified for the post of web developer, I'm proficient /prəˈfiSHənt/ with JavaScript, React, Redux libraries.
 I have over five years of industry experience in web development,
 I have over 5 years of experience in developing web applications
+I think I will be the perfect candidate for this post.
 
 I mainly respond to using React and Redux library to build the application that service thousands of employers, and use cocos engine to develop course software at my position.
 I am a responsible and positive person who has an enthusiastic /ɪnˌθjuːziˈæstɪk/ outlook on work and life.
