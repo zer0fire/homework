@@ -42,4 +42,38 @@
 
 3. 练，多练，practice, more practice, more confident
 
+4. Introduce my project
+   - Write down all you want to say, Actually I think if I can speak slowly, I'll reduce modal particle frequency
+
 First you need to tell the interviewee
+
+Thanks for your time and this is my project demonstration
+Firstly, secondly, finally
+Basis on these two api
+
+How it works
+
+I have experience of programming, Actually I learned nest in three weeks, I can learn about new tech in a short time
+
+I'm focus on developing technical stack, I'm learning more skills on React\WebGL\Next.js, actually
+
+Firstly, I build a backend project by use Nest framework, it has been warp by docker, so we will start it by the command `Docker compose up`
+
+After that, I add the document system by nest/swagger, and access /api/doc path will return the page of document
+There are two interface, two post request that used to implement the function of the challenge, and other interfaces are the basis of the project,
+
+I'll introduce these two interface, init interface used to create the seed data for users and /auth/login interface used to implement the user login function
+
+Other three interface, firstly the main path interface is used to access the project start, and second the user interface is implement to search all users, and the user interface include id is implement the function of the unique user searching
+
+and this is my e2e testing, actually I just write a part of testing, because some testing isn't recoverable, so for the reduce develop time, I reduce some testing
+
+I use mongoDB to store the user data
+
+I use redis to store the attempts data by use the expires time
+
+Thanks for your time and this is my project demonstration
+
+Be confident, and guide the interviewee to enter your area
+
+I got it / I see
