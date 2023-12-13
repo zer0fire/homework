@@ -7,7 +7,7 @@
       1. 看沟通 communication ability
       2. 看组织代码能力 organize the code
    3. 承认 nest 不熟悉，我是个前端，我经历也是前端，所以如果后端答的不好也见谅
-      Actually I applying the post of front-end developer, my resume also mentioned that, I'm not very familiar with nest framework, so if you want to ask me something about nest.js, please forgive me if I made some mistake
+      Actually I applying the post of front-end developer, my cover-letter also mentioned that, I'm not very familiar with nest framework, Actually I just learned it by use some google and watch some video tutorials, so if you want to ask me something about nest.js, please forgive me if I made some mistake
       I finished the coding challenge by google\ some document and some ai helping, all of things I can imagine
 
       I think these backend coding types is very complex / complicated when you first try to write, but if you adapt these types, you will also write code fast
