@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>王猛-前端</title>
+    <style>
+      body,
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+      }
+      code {
+        background-color: #ddd;
+        border-radius: 4px;
+        padding: 5px 2px 2px 2px;
+      }
+      body {
+        padding: 10px;
+      }
+      header h1 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 3px;
+      }
+      header h2 {
+        text-align: center;
+        font-size: 16px;
+      }
+      header {
+        margin: 0px 0px 15px 0px;
+      }
+      aside,
+      section,
+      main {
+        margin-bottom: 15px;
+      }
+      aside h1,
+      section h1,
+      main h1,
+      footer h1 {
+        margin-bottom: 10px;
+      }
+      aside h1 {
+        border-left: 10px solid grey;
+        background: #eee;
+        padding: 2px 0px 2px 10px;
+        font-size: 20px;
+      }
+      aside div.item {
+        display: list-item;
+        margin-left: 30px;
+        font-size: 15px;
+      }
+      section h1 {
+        border-left: 10px solid grey;
+        background: #eee;
+        padding: 2px 0px 2px 10px;
+        font-size: 20px;
+      }
+      section h2,
+      section h3 {
+        font-size: 14px;
+      }
+      section .container {
+        display: flex;
+        justify-content: space-between;
+      }
+      section div {
+        margin-bottom: 5px;
+        font-size: 15px;
+      }
+      main h1 {
+        border-left: 10px solid grey;
+        background: #eee;
+        padding: 2px 0px 2px 10px;
+        font-size: 20px;
+      }
+      main .project h2 {
+        font-size: 20px;
+        margin: 10px 0px 5px 0px;
+      }
+      main .project h3 {
+        font-size: 18px;
+        margin: 5px;
+      }
+      main .project .description {
+        display: list-item;
+        margin-left: 30px;
+        font-size: 15px;
+      }
+      footer h1 {
+        border-left: 10px solid grey;
+        background: #eee;
+        padding: 2px 0px 2px 10px;
+        font-size: 20px;
+      }
+      footer .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 0px 15px;
+        font-size: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>王猛</h1>
+      <h2>18447073846 | hai@zer0fire.me | 成都</h2>
+      <h2>前端开发工程师</h2>
+    </header>
+    <aside class="ability">
+      <h1>专业技能</h1>
+      <div class="container">
+        <div class="item">JavaScript \ TypeScript \ React.js \ Next.js</div>
+        <div class="item">Redux \ Redux-toolkit \ React-router</div>
+        <div class="item">Sass \ Less \ Git \ SourceTree</div>
+      </div>
+    </aside>
+    <section class="experience">
+      <h1>工作经历</h1>
+      <div class="container">
+        <h2>火花思维教育科技有限公司</h2>
+        <h3>2020.11 - 至今</h3>
+      </div>
+      <div>前端开发工程师 VS课件及平台研发部</div>
+      <div class="container">
+        <h2>北京汉克时代科技有限公司</h2>
+        <h3>2019.05 - 2020.10</h3>
+      </div>
+      <div>前端开发工程师 电商平台研发部</div>
+      <div class="container">
+        <h2>内蒙古云科数据有限公司</h2>
+        <h3>2018.05 - 2019.04</h3>
+      </div>
+      <div>前端开发工程师 研发部</div>
+    </section>
+    <main>
+      <h1>项目经历</h1>
+      <div class="project">
+        <h2>游戏梦工厂平台</h2>
+        <h3>项目描述：</h3>
+        <div class="description">
+          该项目是开发课件游戏的低代码开发平台，让教学老师能通过拖拉拽，对现有的课件游戏模版模块进行二次开发，快速拼装课件
+        </div>
+        <h3>技术栈：</h3>
+        <div class="description">
+          使用 React 开发， UI 框架使用 Ant Design，使用 redux-toolkit
+          作为状态管理工具，使用 Cocos 作为可视层进行基础拖拉拽处理
+        </div>
+        <h3>负责内容：</h3>
+        <div class="description">参与低代码项目页面开发</div>
+        <div class="description">对基础拖拽组件库二次开发和功能拓展</div>
+        <div class="description">
+          负责交付给教研老师的低代码模块、模板的开发
+        </div>
+        <div class="description">接入 sentry 监控前端页面质量</div>
+        <h3>项目难点：</h3>
+        <div class="description">如何抽象拖拽库，以及对拖拽库的扩展开发</div>
+        <div class="description">
+          把 Cocos 引擎嵌入到 Web 页面，并接入自定义物料库
+        </div>
+        <div class="description">
+          如何接入数据埋点，统计模板模块等物料使用频率
+        </div>
+        <div class="description">如何接入 sentry 平台用来统计和报告 bug</div>
+        <h3>项目成果：</h3>
+        <div class="description">
+          参与将 Cocos 嵌入到浏览器中，让用户能够在网页中使用 Cocos
+          相关的引擎能力
+        </div>
+        <div class="description">
+          抽象出一套拖拽库，在公司低代码平台作为基建使用
+        </div>
+        <div class="description">
+          相比直接上报 Bug，减少定位 Bug 时间约 50%，同时主动解决尚未影响业务的
+          Bug
+        </div>
+      </div>
+      <div class="project">
+        <h2>GameFactory ⼯具平台</h2>
+        <h3>项目描述：</h3>
+        <div class="description">
+          助力策划团队进行制作的配套⼯具平台，主要目的是方便开发 Cocos
+          游戏引擎的插件和接入其他工具平台
+        </div>
+        <h3>技术栈：</h3>
+        <div class="description">
+          使用 React 开发， UI 框架使用 Ant Design，使用 Cocos Plugin 和
+          Electron API
+        </div>
+        <h3>负责内容：</h3>
+        <div class="description">开发 Cocos 插件工具，及对应的平台页面</div>
+        <div class="description">
+          参与对 Cocos 编辑器的扩展，接入前端工具平台、模块模板平台
+        </div>
+        <div class="description">
+          开发插件对应的发布工具及脚手架，并接入团队内开发的其他工具
+        </div>
+        <h3>项目难点：</h3>
+        <div class="description">
+          Cocos 内部 Plugin 无法引入前端项目，无法使用 npm 和其他库或者框架
+        </div>
+        <div class="description">
+          Electron 和 Cocos Editor 的交互文档缺失，ipc 协议无法直接调试
+        </div>
+        <div class="description">
+          如何利用 Electron 和 Cocos 的 API 来收集本地资源内空引用
+        </div>
+        <div class="description">
+          如何完善脚手架功能，实现从模板到插件的快速迭代
+        </div>
+        <h3>项目成果：</h3>
+        <div class="description">
+          通过 iframe 的方式在 Cocos 插件中引入平台前端项目，可以通过创建 npm
+          项目进行开发，同时通过全局注入的方式保证可以使用 Cocos Plugin API
+        </div>
+        <div class="description">
+          利用连通图算法对依赖进行收集，处理了部分空依赖，比如缺失引用的组件，未被引用的节点等
+        </div>
+        <div class="description">
+          脚手架实现快速创建项目，快速接入 Cocos ，以及本地启动和运行插件的功能
+        </div>
+        <div class="description">
+          将平台调试放到本地启动，可以在本地利用脚手架创建项目并调试
+        </div>
+      </div>
+      <div class="project">
+        <h2>Alita 活动管理平台</h2>
+        <h3>项目描述：</h3>
+        <div class="description">
+          主要是用来创建商品营销活动的后台，提供给电商部门的运营，有约百人 uv
+        </div>
+        <h3>技术栈：</h3>
+        <div class="description">
+          使用 React + dva 技术栈，使用了 Ant Design 作为 UI 库。使用 Axios
+          作为请求库
+        </div>
+        <h3>负责内容：</h3>
+        <div class="description">使用 JSON Schema 自定义渲染表格</div>
+        <div class="description">对自定义渲染的页面进行一定的性能优化</div>
+        <div class="description">
+          对用户上传文件进行管理，并传送到后端进行保存
+        </div>
+        <div class="description">
+          使用JWT 进行跨域认证，让用户可以访问到非核心内容
+        </div>
+        <h3>项目难点：</h3>
+        <div class="description">
+          如何使用 JSON Schema 的自定义渲染，让后端的数据直接渲染成表格
+        </div>
+        <div class="description">表格内容渲染过多，拖慢加载速度和用户交互</div>
+        <div class="description">用户上传的文件过大，上传也容易中断</div>
+        <h3>项目成果：</h3>
+        <div class="description">
+          使用JSON Schema 完成了把后端数据直接渲染成对应表格的能力
+        </div>
+        <div class="description">
+          页面使用虚拟滚动优化页面性能，让渲染出的表单更快速打开
+        </div>
+        <div class="description">
+          实现了大文件上传，并且可以让大文件断点续传
+        </div>
+        <div class="description">使用图片懒加载提高页面加载效率</div>
+      </div>
+    </main>
+    <footer>
+      <h1>教育经历</h1>
+      <div class="container">
+        <div class="description">
+          内蒙古工业大学 物联网工程 本科 信息工程学院
+        </div>
+        <div class="description">2014.09 - 2018.07</div>
+      </div>
+    </footer>
+  </body>
+</html>
