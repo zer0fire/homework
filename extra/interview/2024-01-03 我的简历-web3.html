@@ -180,52 +180,48 @@
         </div>
       </div>
       <div class="project">
-        <h2>GameFactory ⼯具平台</h2>
+        <h2>Chat PPT 平台</h2>
         <h3>项目描述：</h3>
         <div class="description">
-          助力策划团队进行制作的配套⼯具平台，主要目的是方便开发 Cocos
-          游戏引擎的插件和接入其他工具平台
+          该项目是 AI 生成 PPT
+          工具平台前端，通过输入主题关键词让大模型快速帮助用户生成符合主题的 PPT
+          大纲内容及部分图片 （项目地址：https://ppt.chat/）
         </div>
         <h3>技术栈：</h3>
         <div class="description">
-          使用 React 开发， UI 框架使用 Ant Design，使用 Cocos Plugin 和
-          Electron API
+          使用 Next.js 框架开发，使用 Material UI 作为 UI 层，使用 redux-toolkit
+          作为状态管理工具
         </div>
         <h3>负责内容：</h3>
-        <div class="description">开发 Cocos 插件工具，及对应的平台页面</div>
+        <div class="description">参与前端流式显示库的开发</div>
+        <div class="description">引入 html2pptx 库，生成 ppt 在 web 页面的预览</div>
         <div class="description">
-          参与对 Cocos 编辑器的扩展，接入前端工具平台、模块模板平台
+          参与前端页面的搭建与开发，如首页、ppt 展示页等
         </div>
-        <div class="description">
-          开发插件对应的发布工具及脚手架，并接入团队内开发的其他工具
-        </div>
+        <div class="description">优化代码，加入 eslint 等工具规范代码，适应多人开发</div>
         <h3>项目难点：</h3>
+        <div class="description">如何实现 ppt 在 web 页面的预览</div>
         <div class="description">
-          Cocos 内部 Plugin 无法引入前端项目，无法使用 npm 和其他库或者框架
+          如何将后端的流式数据处理成前端可以接收的数据
         </div>
         <div class="description">
-          Electron 和 Cocos Editor 的交互文档缺失，ipc 协议无法直接调试
+          之前的项目使用 JavaScript，调研如何引入工具来适应多人开发
         </div>
         <div class="description">
-          如何利用 Electron 和 Cocos 的 API 来收集本地资源内空引用
-        </div>
-        <div class="description">
-          如何完善脚手架功能，实现从模板到插件的快速迭代
+          如何在 Next 中使用客户端 API，如 document.cookie
         </div>
         <h3>项目成果：</h3>
         <div class="description">
-          通过 iframe 的方式在 Cocos 插件中引入平台前端项目，可以通过创建 npm
-          项目进行开发，同时通过全局注入的方式保证可以使用 Cocos Plugin API
+          使用 html2pptx 库，通过传入自定义渲染函数的方式，使得 PPT 能够在页面里预览
         </div>
         <div class="description">
-          利用连通图算法对依赖进行收集，处理了部分空依赖，比如缺失引用的组件，未被引用的节点等
+          通过 ReadStream 流的方式，读取后端返回的流式数据
         </div>
         <div class="description">
-          脚手架实现快速创建项目，快速接入 Cocos ，以及本地启动和运行插件的功能
+          通过 Next 客户端组件的方式，使用 document.cookie 存储用户信息，并添加过期时间
         </div>
         <div class="description">
-          将平台调试放到本地启动，可以在本地利用脚手架创建项目并调试
-        </div>
+          通过比对技术方案，最终决定将 JavaScript 代码迁移到 TypeScript
       </div>
       <div class="project">
         <h2>Alita 活动管理平台</h2>
@@ -235,7 +231,7 @@
         </div>
         <h3>技术栈：</h3>
         <div class="description">
-          使用 React + dva 技术栈，使用了 Ant Design 作为 UI 库。使用 Axios
+          使用 React + umi 技术栈，使用了 Ant Design 作为 UI 库。使用 Axios
           作为请求库
         </div>
         <h3>负责内容：</h3>
