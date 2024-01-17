@@ -1,0 +1,40 @@
+<head>
+  <link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+</head>
+
+<body>
+  <video
+  id="my-video"
+  class="video-js"
+  controls
+  preload="auto"
+  width="640"
+  height="264"
+  autoplay="autoplay"
+  data-setup='{"fluid": true, "playbackRates": [0.5, 1, 1.5, 2], "autoplay": true }'
+>
+  <source src="5537_1705413958.mp4" type="video/mp4" />
+  <p class="vjs-no-js">
+    To view this video please enable JavaScript, and consider upgrading to a
+    web browser that
+    <a href="https://videojs.com/html5-video-support/" target="_blank"
+      >supports HTML5 video</a
+    >
+  </p>
+</video>
+    <script>
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(function (stream) {
+          let player = videojs("my-video", {
+            autoPlay: true,
+          });
+          player.play();
+        })
+        .catch(function (err) {
+          console.log(err.name + ": " + err.message);
+        });
+    </script>
+  </iframe>
+</body>
